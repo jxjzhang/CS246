@@ -69,7 +69,7 @@ def main():
 	   elif tweet is Hangup:
 		   printNicely("-- Hangup --")
 	   elif tweet.get('text') and tweet.get('lang') == 'en':
-		   printNicely(tweet['user']['screen_name'])
+		   printNicely("@" + tweet['user']['screen_name'] + ' [' + str(tweet['retweet_count']) + ']')
 		   printNicely(tweet['text'])
 #else:
 		   #printNicely("-- Some data: " + str(tweet))
