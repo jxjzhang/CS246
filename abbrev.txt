@@ -40,3 +40,4 @@ bff	best friend
 nvm	never mind
 ffs	for fucks sake
 gr8	great
+bc	because
