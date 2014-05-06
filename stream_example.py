@@ -60,15 +60,7 @@ def main():
 	for tweet in tweet_iter:
 	   # You must test that your tweet has text. It might be a delete
 	   # or data message.
-	   if tweet is None:
-		   printNicely("-- None --")
-	   elif tweet is Timeout:
-		   printNicely("-- Timeout --")
-	   elif tweet is HeartbeatTimeout:
-		   printNicely("-- Heartbeat Timeout --")
-	   elif tweet is Hangup:
-		   printNicely("-- Hangup --")
-	   elif tweet.get('text') and tweet.get('lang') == 'en':
+	   if tweet.get('text') and tweet.get('lang') == 'en':
 		   printNicely("@" + tweet['user']['screen_name'] + ' [' + str(tweet['retweet_count']) + ']')
 		   printNicely(tweet['text'])
 #else:
