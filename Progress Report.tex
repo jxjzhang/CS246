@@ -1,0 +1,35 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{amsmath,amsthm,amsfonts,amssymb,amscd,mathabx,ulem}
+
+
+\title{CS246 Progress Report: Twitter Purifier}
+\author{Wen Shi, Zijun Xue, Jennifer Zhang}
+\date{April 2014}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{color}
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+\begin{document}
+\maketitle
+
+
+\section*{Current Progress}
+We currently have harvested approximately 150,000 tweets via the Twitter sample API.
+\subsubsection*{Building an abbreviation mapping list}
+\paragraph{} Using a combination of UNIX's dictionary, Google Translate's list of most frequently used words\footnote{\href{https://github.com/first20hours/google-10000-english}{google-10000-english}}, and the most common words from TV and movie scripts\footnote{\href{http://en.wiktionary.org/wiki/Wiktionary:Frequency_lists\#TV_and_movie_scripts}{Wiktionary Frequency Lists}}, the most frequent mismatched words from Twitter were found. Among these, around 50 commonly known abbreviations that were also phonetically far from their intended expansion were manually mapped. This process was made more difficult by proper nouns -- particularly celebrities, names of companies, and sport teams. It may be desirable to improve this process by also crosschecking against a list of well-known public figures, but since this will not be affect the final product it may not be worthwhile.
+\subsubsection*{Squeezing}
+\subsubsection*{Word frequency index}
+\subsubsection*{Inverse phonetic index}
+\section*{Changes}
+\subsubsection*{Ambiguous or rare abbreviations}
+\paragraph{}In the course of mapping out abbreviations, it is clear that many abbreviations may have different intended expansions under different contexts. E.g. \textit{hw} overwhelmingly represents \textit{homework} as an abbreviation, but is also a typo for \textit{how}. \textit{kd} in an NBA related tweet likely refers to \textit{Kevin Durant}. \textit{kd} in a video game related tweet refers to \textit{kill/death (ratio)}. Furthermore, Kevin Durant is a highly specific abbreviation -- making a significance decision about what abbreviations to keep in a manually maintained list is causing some difficulty. 
+\paragraph{} Rather the original simplistic plan of plainly mapping abbreviations to their manually sorted expansions as a preprocessing step, it may be a better approach to add their expansions as possible candidates before a final decision is made about which one is appropriate, hopefully with some better semantic bigram evidence. This does not fully resolve whether to keep a \textit{kd:Kevin Durant} mapping in the list, though.
+\subsubsection*{Multiple abbreviations with the same meaning}
+\paragraph{} The following abbreviations are all representative of laughter: \textit{lol, lolz, lmao, lmfao, lls, rofl}. From a semantic perspective, it might be better to treat these all as the same token. Furthermore, it might be awkward to spell the full expansion out in the final result, e.g. is it desirable to purify \textit{LOL I'll just ignore this} to \textit{laughing out loud I'll just ignore this}? We are considering mapping all of these to a simple \textit{(laughter)} token.
+\subsubsection*{Semantic bigram frequency table}
+
+\end{document}
