@@ -7,8 +7,8 @@ dictionary3 = open("tv_dict.txt", "r")
 dictionary4 = open("manual_dict.txt", "r")
 
 abbrev = open("abbrev.txt", "r")
-metadata = re.compile('^[@\w+ \[\d+\]|\-\-.*\-\-]$')
-dictword = re.compile('^\w+$')
+metadata = re.compile('^[@.* \[\d+\]|\-\-.*\-\-]$')
+dictword = re.compile("^[\w|'|-]+$")
 rtprefix = re.compile('^RT @\w+: ')
 num = re.compile('^\d+$')
 
