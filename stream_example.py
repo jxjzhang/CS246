@@ -61,7 +61,7 @@ def main():
 	   # You must test that your tweet has text. It might be a delete
 	   # or data message.
 	   if tweet.get('text') and tweet.get('lang') == 'en':
-		   printNicely("@" + tweet['user']['screen_name'] + ' [' + str(tweet['retweet_count']) + ']')
+		   #printNicely("@" + tweet['user']['screen_name'] + ' [' + str(tweet['retweet_count']) + ']')
 		   printNicely(tweet['text'])
 #else:
 		   #printNicely("-- Some data: " + str(tweet))
