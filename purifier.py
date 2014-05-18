@@ -136,7 +136,15 @@ def edit_candidates(word, d):
 
 # TODO: fill me out with distance 0.5
 def phonetic_candidates(word):
-	return [(word, 0.5)]
+	phonetic_representation=dict_soundex[word]
+	phonetic_representation=phonetic_representation[0]
+	print(phonetic_representation)
+	word_list =dict_inverted_soundex[phonetic_representation]
+	phonetic_candidates=[]
+	for word in word_list:
+		phonetic_candidates.append((word, 0.5))
+		
+	return phonetic_candidates
 
 # Returns a compressed list of tuples that only include the maximum distance value per word
 def compress(tuples):
@@ -185,5 +193,8 @@ dict_freq = open("wordFreqDict.json")
 dict_freq = json.load(dict_freq)
 dict_abbrword = open("abbrev_word.json")
 dict_abbrword = json.load(dict_abbrword)
-print(squeeze("goooood"))
-print(correct_new('spelling'))
+dict_soundex=open("soundexDict_hashTable.json")
+dict_soundex=json.load(dict_soundex)
+dict_inverted_soundex=open("inverted_soundexDict.json")
+dict_inverted_soundex=json.load(dict_inverted_soundex)
+
