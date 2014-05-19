@@ -93,7 +93,8 @@ def word_correct(word):
 	c = []
 	for t in candidates:
 		for expansion in abbrev_word(t[0]):
-			c.append((expansion, t[1] * word_freq(expansion)))
+			if (t[1] * word_freq(expansion)) > 0:
+				c.append((expansion, t[1] * word_freq(expansion)))
 
 	print sorted(c, key=itemgetter(1), reverse=True)
 
