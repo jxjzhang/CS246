@@ -295,7 +295,8 @@ def text_correct(input):
 	text = open(input, 'r')
 	wordre = re.compile('[a-z][\w\-\']*')
 	wordsplit = re.compile('[^a-zA-Z0-9-\'#]+')
-	
+
+ 	ret_list = []		
 	for line in text:
 		print line
 		line = cleanse(line).lower()
@@ -303,11 +304,15 @@ def text_correct(input):
 		#for word in nltk.word_tokenize(line):
 			print word
 			if (wordre.match(word)):
-				print word_correct(word)
+				tmp =  word_correct(word)
+				print tmp
+				ret_list.append(tmp)
 			else:
-				print [(word,0)]
+				tmp = [(word,0)]
+				print tmp
+				ret_list.append(tmp)
 
-
+	print ret_list
 
 
 # temporary globals: loading dictionaries
