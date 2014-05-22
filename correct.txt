@@ -58,10 +58,11 @@ hahaha	haha
 lmfao	lmao
 tweets	tweets
 bro	brother
-ima	I'm gonna 
+ima	i'm gonna 
 aint	ain't
 giggs	giggs
 kinda	kind of
+kinda	kinda
 w	with
 cuz	because
 tryna	trying to
@@ -88,6 +89,7 @@ unfollowed	unfollowed
 1st	1st
 tf	the fuck
 app	application
+app	app
 --	--
 11	11
 pics	pictures
@@ -100,7 +102,7 @@ dat	that
 blog	blog
 t	to
 t	t
-imma	I'm a
+imma	i'm a
 50	50
 ariana	ariana
 d	the
@@ -112,7 +114,8 @@ y	why
 2nd	2nd
 zayn	zayn
 gon	gonna
-xd	XD
+gon	gone
+xd	xd
 oomf	oomf
 sooo	so
 dj	dj
@@ -127,12 +130,13 @@ youtube	youtube
 s	is
 s	s
 finna	find a
-ive	I've
+ive	i’ve
 v	very
 0	0
 stats	stats
 durant	durant
 hahahaha	haha
+hahahaha	hahahaha
 16	16
 texting	texting
 goin	going
@@ -194,7 +198,8 @@ mi	miles
 22	22
 rihanna	rihanna
 everytime	every time
-ap	AP
+everytime	everytime
+ap	ap
 thot	thot
 kd	Kevin Durant
 40	40
@@ -235,7 +240,7 @@ dms	direct messages
 ||	||
 lol'n	lol
 mf	motherfucker
-jk	just kidding
+jk	jk
 dnt	don't
 vidic	vidic
 4th	4th
@@ -274,6 +279,7 @@ chillin	chilling
 should've	should've
 okc	oklahoma city
 okc	okcupid
+okc	okc
 boko	boko
 bf	boyfriend
 lmaooo	lmao
@@ -343,10 +349,12 @@ bjp	bjp
 thots	thots
 que	que
 apps	applications
+app	apps
 fellaini	fellaini
 wasnt	wasn't
 utd	utd
 c'mon	come on
+c'mon	c'mon
 hd	hd
 texted	texted
 followww	follow
@@ -374,7 +382,8 @@ emojis	emojis
 dawg	dog
 yrs	years
 sa	sa
-ik	I know
+ik	i know
+ik	ik
 'cause	because
 21st	21st
 spongebob	spongebob
@@ -385,6 +394,7 @@ hw	homework
 hw	how
 28	28
 hahahah	haha
+hahahah	hahahah
 theyre	they're
 le	le
 suho	suho
@@ -395,4 +405,4 @@ ohh	ohh
 amo	amo
 nemanja	nemanja
 ahhh	ahh
-'i	I
+'i	i

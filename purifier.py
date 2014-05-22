@@ -326,38 +326,43 @@ def bigram_correction(first, second, third):
 
 # Returns a list of candidate word tuples in descending probability order
 def word_correct(word):
+	wordre = re.compile('[a-z][\w\-\']*')
 	candidates = []
-	if (word not in NWORDS): # only correct if not in dictionary
-		a = abbrev_word(word)
-		words = []
-		for w in a:
-			words += squeeze(w)
+	
+	a = abbrev_word(word)
+	words = []
+	for w in a:
+		words += squeeze(w)
+	
+	c = []
+	for w in words:
+		candidates += edit_candidates(w, 1)
+		candidates += phonetic_candidates_soundex(w, 1)
+		candidates += phonetic_candidates_metaphone(w, 1)
+		c += viterbi_trim(candidates, w)
 		
-		c = []
-		for w in words:
-			candidates += edit_candidates(w, 1)
-			candidates += phonetic_candidates_soundex(w, 1)
-			candidates += phonetic_candidates_metaphone(w, 1)
-			c += viterbi_trim(candidates, w)
-			
 
-		candidates = compress(c)
-		c = []
-		for t in candidates:
-			if (t[1] * word_freq(t[0])) > 0:
-				c.append((t[0], t[1] * math.log(word_freq(t[0]) + 1)))
-		candidates = sorted(c, key=itemgetter(1), reverse=True)
-		if not candidates:
-			candidates = [(word, 1)]
-		else:
-			top = candidates[0][1]
-			c = []
-			for t in candidates:
-				if (t[1]/top >= word_threshold):
-					c.append(t)
-			candidates = c
-	else:
+	candidates = compress(c)
+	c = []
+	for t in candidates:
+		if (t[1] * word_freq(t[0])) > 0:
+			c.append((t[0], t[1] * math.log(word_freq(t[0]) + 1)))
+	candidates = sorted(c, key=itemgetter(1), reverse=True)
+
+	if not candidates:
 		candidates = [(word, 1)]
+	else:
+		top = candidates[0][1]
+		c = []
+		# print candidates
+		for t in candidates:
+			if (t[1]/top >= word_threshold):
+				c.append(t)
+		if (word in NWORDS or not wordre.match(word)): # Add word back into candidates with highest score if in dict
+			c.insert(0, (word,top))
+		candidates = compress(c)
+			
+	candidates = sorted(candidates, key=itemgetter(1), reverse=True)
 	return candidates
 
 def text_correct(input, output):
@@ -368,11 +373,12 @@ def text_correct(input, output):
 	wordsplit = re.compile(r'([^a-zA-Z0-9-\'#\[\]]+)')
 	
 	for line in text:
+		output.write(line)
 		print line
 		text_candidates = []
 		clean_line = cleanse(line).lower()
 		for word in (wordsplit).split(clean_line):
-			if (wordre.match(word)):
+			if (wordre.match(word) and word != "2"):
 				text_candidates.append(word_correct(word))
 			elif (whitespace.match(word)):
 				text_candidates.append([(word,0)])
@@ -461,5 +467,5 @@ del dict_bigram_tmp
 dict_correct = open("correct.json")
 dict_correct = json.load(dict_correct)
 phonetic_threshold = 0.4 # used to trim the phonetic candidates
-word_threshold = 0.8 # used to trim the word candidates
+word_threshold = 0.7 # used to trim the word candidates
 

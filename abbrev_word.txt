@@ -20,6 +20,7 @@ gfs	girlfriends
 gr8	great
 bc	because
 mfs	motherfuckers
+mf	motherfucker
 rt	retweet
 hw	hw
 hw	homework
