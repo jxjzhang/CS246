@@ -350,10 +350,11 @@ def text_correct(input, output):
 
 
 # temporary globals: loading dictionaries
-NWORDS = train(words(file('ispell_dict.txt').read())) # dictionary
 alphabet = 'abcdefghijklmnopqrstuvwxyz'
 vowels = 'aeiou'
 
+NWORDS = open("dict.json")
+NWORDS = json.load(NWORDS)
 dict_freq = open("wordFreqDict.json")
 dict_freq = json.load(dict_freq)
 dict_abbrword = open("abbrev_word.json")
