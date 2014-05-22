@@ -11,6 +11,8 @@
 import re, json, collections, numpy, math, string
 from operator import itemgetter
 import unicodedata
+from soundex import *
+from metaphone import *
 
 class Mysqueezer:
     '''
@@ -138,17 +140,31 @@ def edit_candidates(word, d):
 
 # Returns phonetic candidates (list of tuples)
 # TODO(?): Check whether 0.5 is realistic
-def phonetic_candidates(word, d):
-	phonetic_representation=dict_soundex[word] # TODO (Shiwen): this should calculate the token, not look it up in case the word is new
-	phonetic_representation=phonetic_representation[0]
+def phonetic_candidates_soundex(word, d):
+	word=word.lower()
+	phonetic_representation=soundex(word)[1] #done# TODO (Shiwen): this should calculate the token, not look it up in case the word is new
 	# print(phonetic_representation)
-	# TODO (Shiwen): this should not error if a sound token is not found
-	word_list = dict_inverted_soundex[phonetic_representation]
-	phonetic_candidates=[]
-	for w in word_list:
-		phonetic_candidates.append((w, 0.5*d))
+	#Done# TODO (Shiwen): this should not error if a sound token is not found
+	soundex_candidates=[]
+	if phonetic_representation in dict_inverted_soundex:
+		word_list = dict_inverted_soundex[phonetic_representation]
+		for w in word_list:
+			soundex_candidates.append((w, 0.5*d))
 		
-	return phonetic_candidates
+	return soundex_candidates
+
+def phonetic_candidates_metaphone(word, d):
+	word=word.lower()
+	metaphone_representation=doublemetaphone(word)
+	metaphone_candidates=[]
+	for element in metaphone_representation: 
+		if element in dict_inverted_metaphone:
+			word_list=dict_inverted_metaphone[element]
+			for w in word_list:
+				metaphone_candidates.append((w, 0.5*d))
+	
+	return metaphone_candidates
+	
 
 # Returns a compressed list of tuples that only include the maximum distance value per word
 def compress(tuples):
@@ -169,6 +185,20 @@ def abbrev_word(word):
 		return [word]
 	else:
 		return dict_abbrword[word]
+
+# Normalized dictionary lookup on phrase abbreviations
+def abbrev_phrase(word):
+	if not word in dict_abbrphrase:
+		return word
+	else:
+		return norm(dict_abbrphrase[word][0])
+
+# Normalized dictionary lookup on semantic replacements
+def sem(word):
+	if not word in dict_sem:
+		return word
+	else:
+		return norm(dict_sem[word][0])
 
 # Normalized dictionary lookup on word frequency
 def word_freq(word):
@@ -262,6 +292,8 @@ def viterbi_trim(candidates, word):
 	for tuple in candidates:
 		sim = (letter_sim(word, tuple[0]) - phonetic_threshold)*(1/phonetic_threshold)
 		if (sim >= 0):
+			if (tuple[0] in NWORDS or tuple[0] in dict_sem or tuple[0] in dict_abbrphrase):
+				sim *= 1.2 # TODO: arbitrary weight towards stuff in dict?
 			c.append((tuple[0], tuple[1]*sim))
 	return c
 
@@ -272,51 +304,52 @@ def viterbi_trim(candidates, word):
 def word_correct(word):
 	candidates = []
 	if (word not in NWORDS): # only correct if not in dictionary
-		words = squeeze(word)
+		a = abbrev_word(word)
+		words = []
+		for w in a:
+			words += squeeze(w)
 		for w in words:
 			candidates += edit_candidates(w, 1)
-			candidates += phonetic_candidates(w, 1)
+			candidates += phonetic_candidates_soundex(w, 1)
+			candidates += phonetic_candidates_metaphone(w, 1)
 			candidates = viterbi_trim(candidates, w)
 			
 
 		candidates = compress(candidates)
 		c = []
 		for t in candidates:
-			for expansion in abbrev_word(t[0]):
-				if (t[1] * word_freq(expansion)) > 0:
-					c.append((expansion, t[1] * math.log(word_freq(expansion))))
+			if (t[1] * word_freq(t[0])) > 0:
+				c.append((abbrev_phrase(t[0]), t[1] * math.log(word_freq(t[0]))))
 		candidates = sorted(c, key=itemgetter(1), reverse=True)
+		if not candidates:
+			candidates = [(word, -1)]
 	else:
 		candidates = [(word, 0)]
 	return candidates
 
-def text_correct(input):
-	import nltk
+def text_correct(input, output):
 	text = open(input, 'r')
+	output = open(output, 'w')
 	wordre = re.compile('[a-z][\w\-\']*')
-	wordsplit = re.compile('[^a-zA-Z0-9-\'#]+')
 
- 	ret_list = []		
+	wordsplit = re.compile(r'([^a-zA-Z0-9-\'#\[\]]+)')
+	
 	for line in text:
 		print line
-		line = cleanse(line).lower()
-		for word in wordsplit.split(line):
-		#for word in nltk.word_tokenize(line):
-			print word
+		text_candidates = []
+		clean_line = cleanse(line).lower()
+		for word in (wordsplit).split(clean_line):
 			if (wordre.match(word)):
-				tmp =  word_correct(word)
-				print tmp
-				ret_list.append(tmp)
+				text_candidates.append(word_correct(word)[:5])
 			else:
-				tmp = [(word,0)]
-				print tmp
-				ret_list.append(tmp)
+				text_candidates.append([(word,0)])
 
-	print ret_list
+		for c in text_candidates:
+			output.write(sem(c[0][0])) # Replace with semantic equiv, if applicable
 
 
 # temporary globals: loading dictionaries
-NWORDS = train(words(file('big.txt').read())) # dictionary
+NWORDS = train(words(file('ispell_dict.txt').read())) # dictionary
 alphabet = 'abcdefghijklmnopqrstuvwxyz'
 vowels = 'aeiou'
 
@@ -324,10 +357,14 @@ dict_freq = open("wordFreqDict.json")
 dict_freq = json.load(dict_freq)
 dict_abbrword = open("abbrev_word.json")
 dict_abbrword = json.load(dict_abbrword)
-dict_soundex=open("soundexDict_hashTable.json")
-dict_soundex=json.load(dict_soundex)
+dict_abbrphrase = open("abbrev_phrase.json")
+dict_abbrphrase = json.load(dict_abbrphrase)
+dict_sem = open("abbrev_sem.json")
+dict_sem = json.load(dict_sem)
 dict_inverted_soundex=open("inverted_soundexDict.json")
 dict_inverted_soundex=json.load(dict_inverted_soundex)
+dict_inverted_metaphone=open("inverted_metaphoneDict.json")
+dict_inverted_metaphone=json.load(dict_inverted_metaphone)
 dict_letters = read_scoring("letter_scoring.txt")
 phonetic_threshold = 0.4 # used to trim the phonetic candidates
 

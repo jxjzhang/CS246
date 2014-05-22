@@ -18,3 +18,4 @@ def make_dict(f, output):
 
 make_dict('abbrev_word.txt','abbrev_word.json')
 make_dict('abbrev_phrase.txt','abbrev_phrase.json')
+make_dict('abbrev_sem.txt','abbrev_sem.json')
