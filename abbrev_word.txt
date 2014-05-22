@@ -11,7 +11,7 @@ r	are
 c	see
 y	why
 ur	your
-ur	you’re
+ur	you're
 w	with
 bf	boyfriend
 gf	girlfriend
@@ -21,3 +21,6 @@ gr8	great
 bc	because
 mfs	motherfuckers
 rt	retweet
+hw	hw
+hw	homework
+rp	roleplay
