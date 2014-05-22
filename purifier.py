@@ -306,14 +306,16 @@ def bigram_correction(first, second, third):
 	if len(first) !=0:
 		for i in range(len(first)):
 			for j in range(len(second)):
-				ret[second[j][0]] += dict_bigram[(first[i][0],second[j][0])]
+				if (first[i][0],second[j][0]) in dict_bigram:
+					ret[second[j][0]] += dict_bigram[(first[i][0],second[j][0])]
 	if len(third) != 0:
 		for i in range(len(third)):
 			for j in range(len(second)):
-				ret[second[j][0]] += dict_bigram[(second[j][0],third[i][0])]
+				if (second[j][0],third[i][0]) in dict_bigram:
+					ret[second[j][0]] += dict_bigram[(second[j][0],third[i][0])]
 	for i in range(len(second)):
 		ret[second[i][0]] *= second[i][1]+second[i][1]*0.001
-
+	
 	value = 0
 	key = 0
 	for i in range(len(second)):
@@ -377,11 +379,12 @@ def text_correct(input, output):
 			else:
 				text_candidates.append([(word,-1)])
 
-		
+		#print text_candidates
 		for i in range(len(text_candidates)):
 			j = i-1;
 			while j>=0 and text_candidates[j][0][1]==0:
 				j -=1
+		#	print j
 			if j>=0 and text_candidates[j][0][1]>0:
 				first = text_candidates[j]
 			else:
@@ -391,16 +394,17 @@ def text_correct(input, output):
 			else:
 				continue
 			j = i+1
-			while j<len(text_candidates[j]) and text_candidates[j][0][1]==0:
+			while j<len(text_candidates) and text_candidates[j][0][1]==0:
 				j+=1
-			if j<len(text_candidates[j]) and text_candidates[j][0][1] > 0:
+		#	print j
+			if j<len(text_candidates) and text_candidates[j][0][1] > 0:
 				third = text_candidates[j]
 			else:
 				third = []
-		#	print first, second, third
-			print second
+			print first, second, third
+		#	print second
 			text_candidates[i] = [bigram_correction(first,second,third)]
-		print text_candidates
+		#print text_candidates
 	
 		for c in text_candidates:
 			output.write(abbrev_phrase(sem(c[0][0]))) # Replace with semantic equiv, if applicable
