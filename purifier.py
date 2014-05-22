@@ -76,12 +76,10 @@ def cleanse(f, o):
 			line = url.sub("[url]", line)
 			output.write(line)
 
-# TODO: fill me out
+# Returns a list of possible squeezed words
 def squeeze(word):
 	squeezer = Mysqueezer()
 	return squeezer.squeeze(word)
-
-# TODO: fill me out with default distance 1/(1+n)
 
 def words(text): return re.findall('[a-z]+', text.lower()) 
 
@@ -133,7 +131,7 @@ def edit_candidates(word, d):
 # Returns phonetic candidates (list of tuples)
 # TODO: Check whether 0.5 is realistic
 def phonetic_candidates(word, d):
-	phonetic_representation=dict_soundex[word]
+	phonetic_representation=dict_soundex[word] # TODO: this should calculate the token, not look it up in case the word is new
 	phonetic_representation=phonetic_representation[0]
 	print(phonetic_representation)
 	word_list =dict_inverted_soundex[phonetic_representation]
