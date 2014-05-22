@@ -139,7 +139,8 @@ def phonetic_candidates(word, d):
 	word_list =dict_inverted_soundex[phonetic_representation]
 	phonetic_candidates=[]
 	for w in word_list:
-		phonetic_candidates.append((w, 0.5*d*letter_sim(word, w)))
+		if (letter_sim(word, w) > phonetic_threshold):
+			phonetic_candidates.append((w, 0.5*d))
 		
 	return phonetic_candidates
 
@@ -148,12 +149,13 @@ def compress(tuples):
 	tuples = sorted(tuples, key=itemgetter(1), reverse=True)
 	tuples = sorted(tuples, key=itemgetter(0))
 	w = ""
+	compressed = []
 	for t in tuples:
-		if w != t[0]:
-			w = t[0]
-		else:
-			tuples.remove(t)
-	return tuples
+		tuple = (norm(t[0]), t[1])
+		if w != tuple[0]:
+			w = tuple[0]
+			compressed.append(tuple)
+	return compressed
 
 # Normalized dictionary lookup on single word abbreviations
 def abbrev_word(word):
@@ -265,6 +267,7 @@ def word_correct(word):
 # temporary globals: loading dictionaries
 NWORDS = train(words(file('big.txt').read()))
 alphabet = 'abcdefghijklmnopqrstuvwxyz'
+vowels = 'aeiou'
 
 dict_freq = open("wordFreqDict.json")
 dict_freq = json.load(dict_freq)
@@ -276,4 +279,5 @@ dict_inverted_soundex=open("inverted_soundexDict.json")
 dict_inverted_soundex=json.load(dict_inverted_soundex)
 dict_letters = read_scoring("letter_scoring.txt")
 gpenalty = 0
+phonetic_threshold = 0.5 # used to trim the phonetic candidates
 
