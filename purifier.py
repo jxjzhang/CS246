@@ -343,7 +343,8 @@ def text_correct(input, output):
 				text_candidates.append(word_correct(word)[:5])
 			else:
 				text_candidates.append([(word,0)])
-
+		
+	
 		for c in text_candidates:
 			output.write(sem(c[0][0])) # Replace with semantic equiv, if applicable
 
