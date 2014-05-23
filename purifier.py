@@ -129,9 +129,9 @@ def edit_candidates(word, d):
 	return correct_new(word)
 
 # Returns phonetic candidates (list of tuples)
-# TODO: Check whether 0.5 is realistic
+# TODO(?): Check whether 0.5 is realistic
 def phonetic_candidates(word, d):
-	phonetic_representation=dict_soundex[word] # TODO: this should calculate the token, not look it up in case the word is new
+	phonetic_representation=dict_soundex[word] # TODO (Shiwen): this should calculate the token, not look it up in case the word is new
 	phonetic_representation=phonetic_representation[0]
 	print(phonetic_representation)
 	word_list =dict_inverted_soundex[phonetic_representation]
@@ -249,7 +249,7 @@ def word_correct(word):
 	words = squeeze(word)
 	candidates = []
 	for w in words:
-		# TODO: uncomment me when edit_candidates is fixed
+		# TODO (Zijun): uncomment the line below when edit_candidates is fixed
 		#candidates += edit_candidates(w, 1)
 		candidates += phonetic_candidates(w, 1)
 
