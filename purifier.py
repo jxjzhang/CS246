@@ -28,7 +28,6 @@ class Mysqueezer:
             if word[i]==word[i+1] and word[i+1] == word[i+2]:
                 start = i
                 k = i+1
-                print( start,k)
                 while k<len(word) and word[k]==word[i]:
                     k+=1
                 end = k-1
@@ -137,12 +136,11 @@ def edit_candidates(word, d):
 def phonetic_candidates(word, d):
 	phonetic_representation=dict_soundex[word] # TODO (Shiwen): this should calculate the token, not look it up in case the word is new
 	phonetic_representation=phonetic_representation[0]
-	print(phonetic_representation)
-	word_list =dict_inverted_soundex[phonetic_representation]
+	# print(phonetic_representation)
+	word_list = dict_inverted_soundex[phonetic_representation]
 	phonetic_candidates=[]
 	for w in word_list:
-		if (letter_sim(word, w) > phonetic_threshold):
-			phonetic_candidates.append((w, 0.5*d))
+		phonetic_candidates.append((w, 0.5*d))
 		
 	return phonetic_candidates
 
@@ -253,26 +251,39 @@ def letter_sim(word, candidate):
 	sim = align(word, candidate, dict_letters)
 	return sim/score
 
+def viterbi_trim(candidates, word):
+	c = []
+	for tuple in candidates:
+		if (letter_sim(word, tuple[0]) >= phonetic_threshold):
+			c.append(tuple)
+	return c
+
 # Returns a list of candidate word tuples in descending probability order
 def word_correct(word):
-	words = squeeze(word)
 	candidates = []
-	for w in words:
-		# TODO (Zijun): uncomment the line below when edit_candidates is fixed
-		candidates += edit_candidates(w, 1)
-		candidates += phonetic_candidates(w, 1)
+	if (word not in NWORDS): # only correct if not in dictionary
+		words = squeeze(word)
+		for w in words:
+			candidates += edit_candidates(w, 1)
+			candidates += phonetic_candidates(w, 1)
+			candidates = viterbi_trim(candidates, w)
+			
 
-	candidates = compress(candidates)
-	c = []
-	for t in candidates:
-		for expansion in abbrev_word(t[0]):
-			if (t[1] * word_freq(expansion)) > 0:
-				c.append((expansion, t[1] * word_freq(expansion)))
+		candidates = compress(candidates)
+		c = []
+		for t in candidates:
+			for expansion in abbrev_word(t[0]):
+				if (t[1] * word_freq(expansion)) > 0:
+					c.append((expansion, t[1] * word_freq(expansion)))
+		candidates = sorted(c, key=itemgetter(1), reverse=True)
+	else:
+		candidates = [(word, 0)]
+	return candidates
 
-	print sorted(c, key=itemgetter(1), reverse=True)
+
 
 # temporary globals: loading dictionaries
-NWORDS = train(words(file('big.txt').read()))
+NWORDS = train(words(file('big.txt').read())) # dictionary
 alphabet = 'abcdefghijklmnopqrstuvwxyz'
 vowels = 'aeiou'
 
@@ -280,11 +291,10 @@ dict_freq = open("wordFreqDict.json")
 dict_freq = json.load(dict_freq)
 dict_abbrword = open("abbrev_word.json")
 dict_abbrword = json.load(dict_abbrword)
-dict_soundex=open("soundexDict.json")
+dict_soundex=open("soundexDict_hashTable.json")
 dict_soundex=json.load(dict_soundex)
 dict_inverted_soundex=open("inverted_soundexDict.json")
 dict_inverted_soundex=json.load(dict_inverted_soundex)
 dict_letters = read_scoring("letter_scoring.txt")
-gpenalty = 0
 phonetic_threshold = 0.5 # used to trim the phonetic candidates
 
