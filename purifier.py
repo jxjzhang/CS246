@@ -301,21 +301,31 @@ def viterbi_trim(candidates, word):
 
 def bigram_correction(first, second, third):
 	ret = dict();
+	flag = 0
 	for i in range(len(second)):
 		ret[second[i][0]] = 0
 	if len(first) !=0:
+		flag = 1
 		for i in range(len(first)):
 			for j in range(len(second)):
 				if (first[i][0],second[j][0]) in dict_bigram:
-					ret[second[j][0]] += dict_bigram[(first[i][0],second[j][0])]
+					ret[second[j][0]] += dict_bigram[(first[i][0],second[j][0])]*first[i][1]*second[j][1]
+				else:
+					ret[second[j][0]] = 1*first[i][1]*second[j][1]
 	if len(third) != 0:
+		flag =1
 		for i in range(len(third)):
 			for j in range(len(second)):
 				if (second[j][0],third[i][0]) in dict_bigram:
-					ret[second[j][0]] += dict_bigram[(second[j][0],third[i][0])]
-	for i in range(len(second)):
-		ret[second[i][0]] *= second[i][1]+second[i][1]*0.001
+					ret[second[j][0]] += dict_bigram[(second[j][0],third[i][0])]*second[j][1]*third[i][1]
+				else:
+					ret[second[j][0]] += 1*second[j][1]*third[i][1]
+#	for i in range(len(second)):
+#		ret[second[i][0]] *= second[i][1]+second[i][1]*0.001
 	
+	if not flag:
+		for i in range(len(second)):
+			ret[second[i][0]] = second[i][1]
 	value = 0
 	key = 0
 	for i in range(len(second)):
@@ -385,7 +395,7 @@ def text_correct(input, output):
 			else:
 				text_candidates.append([(word,-1)])
 
-		#print text_candidates
+		print text_candidates
 		for i in range(len(text_candidates)):
 			j = i-1;
 			while j>=0 and text_candidates[j][0][1]==0:
@@ -410,7 +420,7 @@ def text_correct(input, output):
 			print first, second, third
 		#	print second
 			text_candidates[i] = [bigram_correction(first,second,third)]
-		#print text_candidates
+		print text_candidates
 	
 		for c in text_candidates:
 			output.write(abbrev_phrase(sem(c[0][0]))) # Replace with semantic equiv, if applicable
