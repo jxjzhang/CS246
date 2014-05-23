@@ -1,7 +1,9 @@
 unfollowers
+followers
 snapchat
 retweet
 retweets
+retweeting
 facebook
 pacers
 unfollower
