@@ -197,15 +197,15 @@ def read_scoring(scorefile):
     
     return sm
 
-def bestglobal(m, sm, r, c, s1, s2):
+def bestglobal(m, sm, r, c, s1, s2, rpen, cpen):
 	if (s1 not in alphabet):
 		s1 = '*'
 	if (s2 not in alphabet):
 		s2 = '*'
 
 	diag = m[r-1, c-1] + sm[s1 + s2]
-	across = m[r, c-1] + gpenalty
-	down = m[r-1, c] + gpenalty
+	across = m[r, c-1] + cpen
+	down = m[r-1, c] + rpen
 	best = max(diag, across, down)
 
 	if (best == down):
@@ -218,30 +218,35 @@ def bestglobal(m, sm, r, c, s1, s2):
 	return (t, best)
 
 def align(a, b, sm):
-    n = len(a) + 1 # rows
-    m = len(b) + 1 # cols
-	
-    gv = numpy.zeros(n * m).reshape(n, m) # global viterbi matrix
-    gvtrack = numpy.zeros(n * m).reshape(n, m) # tracking for gv
-    
-    gvtrack[0,0] = '-999' # represents a start point in string alignment
-    
-    # initialize the gv matrix
-    for i in range(0, m):
-        gv[0, i] = i * gpenalty
-        if (i != 0):
-            gvtrack[0, i] = 1
-    for i in range (0, n):
-        gv[i, 0] = i * gpenalty
-        if (i != 0):
-            gvtrack[i, 0] = -1
-	
-    for r in range(1, n):
-        for c in range (1, m):
-            (t, v) = bestglobal(gv, sm, r, c, b[c-1], a[r-1])
-            gv[r, c] = v
-            gvtrack[r, c] = t
-    return gv[n-1, m-1]
+	n = len(a) + 1 # rows
+	m = len(b) + 1 # cols
+	rpenalty = -1
+	cpenalty = -0.1
+
+	gv = numpy.zeros(n * m).reshape(n, m) # global viterbi matrix
+	gvtrack = numpy.zeros(n * m).reshape(n, m) # tracking for gv
+
+	gvtrack[0,0] = '-999' # represents a start point in string alignment
+
+	# initialize the gv matrix
+	for i in range(0, m):
+		gv[0, i] = i * cpenalty
+		if (i != 0):
+			gvtrack[0, i] = 1
+	for i in range (0, n):
+		gv[i, 0] = i * rpenalty
+		if (i != 0):
+			gvtrack[i, 0] = -1
+
+	for r in range(1, n):
+		for c in range (1, m):
+			(t, v) = bestglobal(gv, sm, r, c, b[c-1], a[r-1], rpenalty, cpenalty)
+			gv[r, c] = v
+			gvtrack[r, c] = t
+	return gv[n-1, m-1]
+
+def tokenize(word):
+	return list(word)
 
 def letter_sim(word, candidate):
 	score = align(word, word, dict_letters)
