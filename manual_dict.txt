@@ -1,7 +1,9 @@
 unfollowers
+followers
 snapchat
 retweet
 retweets
+retweeting
 facebook
 pacers
 unfollower
@@ -27,3 +29,5 @@ netflix
 obama
 westbrook
 texting
+hoes
+XD
