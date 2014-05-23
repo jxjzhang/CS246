@@ -25,3 +25,5 @@ rt	retweet
 hw	hw
 hw	homework
 rp	roleplay
+da	the
+da	da
