@@ -137,6 +137,7 @@ def phonetic_candidates(word, d):
 	phonetic_representation=dict_soundex[word] # TODO (Shiwen): this should calculate the token, not look it up in case the word is new
 	phonetic_representation=phonetic_representation[0]
 	# print(phonetic_representation)
+	# TODO (Shiwen): this should not error if a sound token is not found
 	word_list = dict_inverted_soundex[phonetic_representation]
 	phonetic_candidates=[]
 	for w in word_list:
