@@ -23,5 +23,5 @@ if __name__=='__main__':
 	with open(filename) as fp:
 		json_data=json.load(fp)
 		d=inverted_soundex(json_data)
-		with open('inverted_soundexDict.json', 'w') as out:
+		with open('inverted_soundexDict2.json', 'w') as out:
 			json.dump(d, out)
