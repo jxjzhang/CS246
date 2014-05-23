@@ -54,7 +54,11 @@ class Mysqueezer:
         return ret
 
 def norm(s):
-	return unicodedata.normalize('NFKD', s).encode('ascii','ignore')
+	if isinstance(s, unicode):
+		return unicodedata.normalize('NFKD', s).encode('ascii','ignore')
+	else:
+		return s
+
 
 # removes the metadata on a raw tweet file (including retweet indicators)
 # replaces @username with [username], and any links with [url]
