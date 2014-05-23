@@ -115,13 +115,13 @@ def correct_new(word):
     lst = []
     tmp = list(set0)
     for i in tmp:
-	lst  += (i,0)
+	lst.append((i,1.0))
     tmp = list(set1)
     for i in tmp:
-	lst +=(i,1)
+	lst.append((i,1.0/(1+1)))
     tmp = list(set2)
     for i in tmp:
-	lst +=(i,2)
+	lst.append((i,1.0/(1+2)))
     return lst	
 
 def edit_candidates(word, d):
