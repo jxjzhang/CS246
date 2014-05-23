@@ -250,7 +250,7 @@ def word_correct(word):
 	candidates = []
 	for w in words:
 		# TODO (Zijun): uncomment the line below when edit_candidates is fixed
-		#candidates += edit_candidates(w, 1)
+		candidates += edit_candidates(w, 1)
 		candidates += phonetic_candidates(w, 1)
 
 	candidates = compress(candidates)
