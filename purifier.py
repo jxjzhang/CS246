@@ -193,6 +193,13 @@ def abbrev_phrase(word):
 	else:
 		return norm(dict_abbrphrase[word][0])
 
+# Normalized dictionary lookup on semantic replacements
+def sem(word):
+	if not word in dict_sem:
+		return word
+	else:
+		return norm(dict_sem[word][0])
+
 # Normalized dictionary lookup on word frequency
 def word_freq(word):
 	if not word in dict_freq:
@@ -285,7 +292,7 @@ def viterbi_trim(candidates, word):
 	for tuple in candidates:
 		sim = (letter_sim(word, tuple[0]) - phonetic_threshold)*(1/phonetic_threshold)
 		if (sim >= 0):
-			if (tuple[0] in NWORDS):
+			if (tuple[0] in NWORDS or tuple[0] in dict_sem or tuple[0] in dict_abbrphrase):
 				sim *= 1.2 # TODO: arbitrary weight towards stuff in dict?
 			c.append((tuple[0], tuple[1]*sim))
 	return c
@@ -337,9 +344,7 @@ def text_correct(input, output):
 				text_candidates.append([(word,0)])
 
 		for c in text_candidates:
-			output.write(c[0][0])
-
-
+			output.write(sem(c[0][0])) # Replace with semantic equiv, if applicable
 
 
 # temporary globals: loading dictionaries
@@ -353,6 +358,8 @@ dict_abbrword = open("abbrev_word.json")
 dict_abbrword = json.load(dict_abbrword)
 dict_abbrphrase = open("abbrev_phrase.json")
 dict_abbrphrase = json.load(dict_abbrphrase)
+dict_sem = open("abbrev_sem.json")
+dict_sem = json.load(dict_sem)
 dict_inverted_soundex=open("inverted_soundexDict.json")
 dict_inverted_soundex=json.load(dict_inverted_soundex)
 dict_inverted_metaphone=open("inverted_metaphoneDict.json")
