@@ -320,8 +320,14 @@ def word_correct(word):
 		c = []
 		for t in candidates:
 			if (t[1] * word_freq(t[0])) > 0:
-				c.append((abbrev_phrase(t[0]), t[1] * math.log(word_freq(t[0]) + 1)))
+				c.append((t[0], t[1] * math.log(word_freq(t[0]) + 1)))
 		candidates = sorted(c, key=itemgetter(1), reverse=True)
+		top = candidates[0][1]
+		c = []
+		for t in candidates:
+			if (t[1]/top >= word_threshold):
+				c.append(t)
+		candidates = c
 		if not candidates:
 			candidates = [(word, -1)]
 	else:
@@ -340,12 +346,12 @@ def text_correct(input, output):
 		clean_line = cleanse(line).lower()
 		for word in (wordsplit).split(clean_line):
 			if (wordre.match(word)):
-				text_candidates.append(word_correct(word)[:5])
+				text_candidates.append(word_correct(word))
 			else:
 				text_candidates.append([(word,0)])
 
 		for c in text_candidates:
-			output.write(sem(c[0][0])) # Replace with semantic equiv, if applicable
+			output.write(abbrev_phrase(sem(c[0][0]))) # Replace with semantic equiv, if applicable
 
 
 # temporary globals: loading dictionaries
@@ -368,4 +374,5 @@ dict_inverted_metaphone=open("inverted_metaphoneDict.json")
 dict_inverted_metaphone=json.load(dict_inverted_metaphone)
 dict_letters = read_scoring("letter_scoring.txt")
 phonetic_threshold = 0.4 # used to trim the phonetic candidates
+word_threshold = 0.8 # used to trim the word candidates
 
