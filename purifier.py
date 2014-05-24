@@ -186,6 +186,13 @@ def abbrev_word(word):
 	else:
 		return dict_abbrword[word]
 
+# Normalized dictionary lookup on phrase abbreviations
+def abbrev_phrase(word):
+	if not word in dict_abbrphrase:
+		return word
+	else:
+		return norm(dict_abbrphrase[word][0])
+
 # Normalized dictionary lookup on word frequency
 def word_freq(word):
 	if not word in dict_freq:
@@ -303,28 +310,32 @@ def word_correct(word):
 		c = []
 		for t in candidates:
 			if (t[1] * word_freq(t[0])) > 0:
-				c.append((t[0], t[1] * math.log(word_freq(t[0]))))
+				c.append((abbrev_phrase(t[0]), t[1] * math.log(word_freq(t[0]))))
 		candidates = sorted(c, key=itemgetter(1), reverse=True)
+		if not candidates:
+			candidates = [(word, -1)]
 	else:
 		candidates = [(word, 0)]
 	return candidates
 
-def text_correct(input):
+def text_correct(input, output):
 	text = open(input, 'r')
+	output = open(output, 'w')
 	wordre = re.compile('[a-z][\w\-\']*')
 	wordsplit = re.compile(r'([^a-zA-Z0-9-\'#\[\]]+)')
 	
 	for line in text:
 		print line
 		text_candidates = []
-		line = cleanse(line).lower()
-		for word in (wordsplit).split(line):
+		clean_line = cleanse(line).lower()
+		for word in (wordsplit).split(clean_line):
 			if (wordre.match(word)):
 				text_candidates.append(word_correct(word)[:5])
 			else:
 				text_candidates.append([(word,0)])
-		print text_candidates
 
+		for c in text_candidates:
+			output.write(c[0][0])
 
 
 
