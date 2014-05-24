@@ -11,6 +11,8 @@
 import re, json, collections, numpy, math
 from operator import itemgetter
 import unicodedata
+from soundex import *
+from metaphone import *
 
 class Mysqueezer:
     '''
@@ -133,17 +135,31 @@ def edit_candidates(word, d):
 
 # Returns phonetic candidates (list of tuples)
 # TODO(?): Check whether 0.5 is realistic
-def phonetic_candidates(word, d):
-	phonetic_representation=dict_soundex[word] # TODO (Shiwen): this should calculate the token, not look it up in case the word is new
-	phonetic_representation=phonetic_representation[0]
+def phonetic_candidates_soundex(word, d):
+	word=word.lower()
+	phonetic_representation=soundex(word)[1] #done# TODO (Shiwen): this should calculate the token, not look it up in case the word is new
 	# print(phonetic_representation)
-	# TODO (Shiwen): this should not error if a sound token is not found
-	word_list = dict_inverted_soundex[phonetic_representation]
-	phonetic_candidates=[]
-	for w in word_list:
-		phonetic_candidates.append((w, 0.5*d))
+	#Done# TODO (Shiwen): this should not error if a sound token is not found
+	soundex_candidates=[]
+	if phonetic_representation in dict_inverted_soundex:
+		word_list = dict_inverted_soundex[phonetic_representation]
+			for w in word_list:
+				soundex_candidates.append((w, 0.5*d))
 		
-	return phonetic_candidates
+	return soundex_candidates
+
+def phonetic_candidates_metaphone(word, d):
+	word=word.lower()
+	metaphone_representation=doublemetaphone(word)
+	metaphone_cadidates=[]
+	for element in metaphone_representation: 
+		if element in dict_inverted_metaphone:
+			word_list=dict_inverted_metaphone[element]
+			for word in word_list
+				metaphone_candidates.append((w, 0.5*d))
+	
+	return metaphone_candidates
+	
 
 # Returns a compressed list of tuples that only include the maximum distance value per word
 def compress(tuples):
@@ -304,10 +320,10 @@ dict_freq = open("wordFreqDict.json")
 dict_freq = json.load(dict_freq)
 dict_abbrword = open("abbrev_word.json")
 dict_abbrword = json.load(dict_abbrword)
-dict_soundex=open("soundexDict_hashTable.json")
-dict_soundex=json.load(dict_soundex)
 dict_inverted_soundex=open("inverted_soundexDict.json")
 dict_inverted_soundex=json.load(dict_inverted_soundex)
+dict_inverted_metaphone=open("inverted_metaphoneDict.json")
+dict_inverted_metaphone=json.load(dict_inverted_metaphone)
 dict_letters = read_scoring("letter_scoring.txt")
 phonetic_threshold = 0.5 # used to trim the phonetic candidates
 
