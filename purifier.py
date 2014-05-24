@@ -8,7 +8,7 @@
 # -> list of tuples (candidate, p) where p is relative probability
 
 
-import re, json, collections, numpy, math
+import re, json, collections, numpy, math, nltk
 from operator import itemgetter
 import unicodedata
 
@@ -61,23 +61,28 @@ def norm(s):
 
 # removes the metadata on a raw tweet file (including retweet indicators)
 # replaces @username with [username], and any links with [url]
-def cleanse(f, o):
+def cleanse(line):
+	line = norm(line)
 	metadata = re.compile('^@\w+ \[\d+\]$')
 	rtprefix = re.compile('^RT @\w+: ')
 	user = re.compile('@\w+')
 	url = re.compile('http(s)?://.+')
 
+	if not metadata.match(line):
+		m = rtprefix.search(line)
+		if (m):
+			line = line[m.end():]
+		
+		line = user.sub("[username]", line)
+		line = url.sub("[url]", line)
+		return line
+	return ""
+
+def cleanse_file(f, o):
 	tweets = open(f, "r")
 	output = open(o, "w")
 	for line in tweets:
-		if not metadata.match(line):
-			m = rtprefix.search(line)
-			if (m):
-				line = line[m.end():]
-			
-			line = user.sub("[username]", line)
-			line = url.sub("[url]", line)
-			output.write(line)
+		output.write(cleanse(line))
 
 # Returns a list of possible squeezed words
 def squeeze(word):
@@ -255,8 +260,9 @@ def letter_sim(word, candidate):
 def viterbi_trim(candidates, word):
 	c = []
 	for tuple in candidates:
-		if (letter_sim(word, tuple[0]) >= phonetic_threshold):
-			c.append(tuple)
+		sim = (letter_sim(word, tuple[0]) - phonetic_threshold)*(1/phonetic_threshold)
+		if (sim >= 0):
+			c.append((tuple[0], tuple[1]*sim))
 	return c
 
 
@@ -278,7 +284,7 @@ def word_correct(word):
 		for t in candidates:
 			for expansion in abbrev_word(t[0]):
 				if (t[1] * word_freq(expansion)) > 0:
-					c.append((expansion, t[1] * word_freq(expansion)))
+					c.append((expansion, t[1] * math.log(word_freq(expansion))))
 		candidates = sorted(c, key=itemgetter(1), reverse=True)
 	else:
 		candidates = [(word, 0)]
@@ -286,13 +292,17 @@ def word_correct(word):
 
 def text_correct(input):
 	text = open(input, 'r')
-	wordre = re.compile('[a-z].*')
+	wordre = re.compile('[a-z][\w\-\']*')
 	for line in text:
 		print line
-		for word in line.split():
-			word = word.lower()
+		line = cleanse(line).lower()
+		print line
+		for word in nltk.word_tokenize(line):
 			if (wordre.match(word)):
 				print word_correct(word)
+			else:
+				print word
+
 
 
 # temporary globals: loading dictionaries
@@ -309,5 +319,5 @@ dict_soundex=json.load(dict_soundex)
 dict_inverted_soundex=open("inverted_soundexDict.json")
 dict_inverted_soundex=json.load(dict_inverted_soundex)
 dict_letters = read_scoring("letter_scoring.txt")
-phonetic_threshold = 0.5 # used to trim the phonetic candidates
+phonetic_threshold = 0.4 # used to trim the phonetic candidates
 
