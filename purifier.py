@@ -259,6 +259,9 @@ def viterbi_trim(candidates, word):
 			c.append(tuple)
 	return c
 
+
+# TODO(?): Generate bigram frequency dictionary
+
 # Returns a list of candidate word tuples in descending probability order
 def word_correct(word):
 	candidates = []
@@ -281,6 +284,15 @@ def word_correct(word):
 		candidates = [(word, 0)]
 	return candidates
 
+def text_correct(input):
+	text = open(input, 'r')
+	wordre = re.compile('[a-z].*')
+	for line in text:
+		print line
+		for word in line.split():
+			word = word.lower()
+			if (wordre.match(word)):
+				print word_correct(word)
 
 
 # temporary globals: loading dictionaries
