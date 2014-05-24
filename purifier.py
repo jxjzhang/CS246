@@ -142,9 +142,8 @@ def edit_candidates(word, d):
 # TODO(?): Check whether 0.5 is realistic
 def phonetic_candidates_soundex(word, d):
 	word=word.lower()
-	phonetic_representation=soundex(word)[1] #done# TODO (Shiwen): this should calculate the token, not look it up in case the word is new
+	phonetic_representation=soundex(word)[1]
 	# print(phonetic_representation)
-	#Done# TODO (Shiwen): this should not error if a sound token is not found
 	soundex_candidates=[]
 	if phonetic_representation in dict_inverted_soundex:
 		word_list = dict_inverted_soundex[phonetic_representation]
