@@ -8,7 +8,7 @@
 # -> list of tuples (candidate, p) where p is relative probability
 
 
-import re, json, collections, numpy, math
+import re, json, collections, numpy, math, string
 from operator import itemgetter
 import unicodedata
 from soundex import *
@@ -63,23 +63,28 @@ def norm(s):
 
 # removes the metadata on a raw tweet file (including retweet indicators)
 # replaces @username with [username], and any links with [url]
-def cleanse(f, o):
+def cleanse(line):
+	line = norm(line)
 	metadata = re.compile('^@\w+ \[\d+\]$')
 	rtprefix = re.compile('^RT @\w+: ')
 	user = re.compile('@\w+')
-	url = re.compile('http(s)?://.+')
+	url = re.compile('http(s)?://[^\s]+')
 
+	if not metadata.match(line):
+		m = rtprefix.search(line)
+		if (m):
+			line = line[m.end():]
+		
+		line = user.sub("[username]", line)
+		line = url.sub("[url]", line)
+		return line
+	return ""
+
+def cleanse_file(f, o):
 	tweets = open(f, "r")
 	output = open(o, "w")
 	for line in tweets:
-		if not metadata.match(line):
-			m = rtprefix.search(line)
-			if (m):
-				line = line[m.end():]
-			
-			line = user.sub("[username]", line)
-			line = url.sub("[url]", line)
-			output.write(line)
+		output.write(cleanse(line))
 
 # Returns a list of possible squeezed words
 def squeeze(word):
@@ -271,8 +276,9 @@ def letter_sim(word, candidate):
 def viterbi_trim(candidates, word):
 	c = []
 	for tuple in candidates:
-		if (letter_sim(word, tuple[0]) >= phonetic_threshold):
-			c.append(tuple)
+		sim = (letter_sim(word, tuple[0]) - phonetic_threshold)*(1/phonetic_threshold)
+		if (sim >= 0):
+			c.append((tuple[0], tuple[1]*sim))
 	return c
 
 
@@ -282,7 +288,11 @@ def viterbi_trim(candidates, word):
 def word_correct(word):
 	candidates = []
 	if (word not in NWORDS): # only correct if not in dictionary
-		words = squeeze(word)
+		a = abbrev_word(word)
+		words = []
+		for w in a:
+			words += squeeze(w)
+		print words
 		for w in words:
 			candidates += edit_candidates(w, 1)
 			candidates += phonetic_candidates(w, 1)
@@ -292,9 +302,8 @@ def word_correct(word):
 		candidates = compress(candidates)
 		c = []
 		for t in candidates:
-			for expansion in abbrev_word(t[0]):
-				if (t[1] * word_freq(expansion)) > 0:
-					c.append((expansion, t[1] * word_freq(expansion)))
+			if (t[1] * word_freq(t[0])) > 0:
+				c.append((t[0], t[1] * math.log(word_freq(t[0]))))
 		candidates = sorted(c, key=itemgetter(1), reverse=True)
 	else:
 		candidates = [(word, 0)]
@@ -302,17 +311,24 @@ def word_correct(word):
 
 def text_correct(input):
 	text = open(input, 'r')
-	wordre = re.compile('[a-z].*')
+	wordre = re.compile('[a-z][\w\-\']*')
+	wordsplit = re.compile('[^a-zA-Z0-9-\'#]+')
+	
 	for line in text:
 		print line
-		for word in line.split():
-			word = word.lower()
+		line = cleanse(line).lower()
+		for word in wordsplit.split(line):
+			print word
 			if (wordre.match(word)):
-				print word_correct(word)
+				print word_correct(word)[:10]
+			else:
+				print [(word,0)]
+
+
 
 
 # temporary globals: loading dictionaries
-NWORDS = train(words(file('big.txt').read())) # dictionary
+NWORDS = train(words(file('ispell_dict.txt').read())) # dictionary
 alphabet = 'abcdefghijklmnopqrstuvwxyz'
 vowels = 'aeiou'
 
@@ -320,10 +336,12 @@ dict_freq = open("wordFreqDict.json")
 dict_freq = json.load(dict_freq)
 dict_abbrword = open("abbrev_word.json")
 dict_abbrword = json.load(dict_abbrword)
+dict_abbrphrase = open("abbrev_phrase.json")
+dict_abbrphrase = json.load(dict_abbrphrase)
 dict_inverted_soundex=open("inverted_soundexDict.json")
 dict_inverted_soundex=json.load(dict_inverted_soundex)
 dict_inverted_metaphone=open("inverted_metaphoneDict.json")
 dict_inverted_metaphone=json.load(dict_inverted_metaphone)
 dict_letters = read_scoring("letter_scoring.txt")
-phonetic_threshold = 0.5 # used to trim the phonetic candidates
+phonetic_threshold = 0.4 # used to trim the phonetic candidates
 

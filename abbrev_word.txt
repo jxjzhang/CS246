@@ -9,6 +9,7 @@ fb	facebook
 u	you
 r	are
 c	see
+y	why
 ur	your
 ur	you’re
 w	with
