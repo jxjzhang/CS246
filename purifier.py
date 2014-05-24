@@ -319,7 +319,7 @@ def word_correct(word):
 		c = []
 		for t in candidates:
 			if (t[1] * word_freq(t[0])) > 0:
-				c.append((abbrev_phrase(t[0]), t[1] * math.log(word_freq(t[0]))))
+				c.append((abbrev_phrase(t[0]), t[1] * math.log(word_freq(t[0]) + 1)))
 		candidates = sorted(c, key=itemgetter(1), reverse=True)
 		if not candidates:
 			candidates = [(word, -1)]
