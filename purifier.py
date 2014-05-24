@@ -292,10 +292,10 @@ def word_correct(word):
 		words = []
 		for w in a:
 			words += squeeze(w)
-		print words
 		for w in words:
 			candidates += edit_candidates(w, 1)
-			candidates += phonetic_candidates(w, 1)
+			candidates += phonetic_candidates_soundex(w, 1)
+			candidates += phonetic_candidates_metaphone(w, 1)
 			candidates = viterbi_trim(candidates, w)
 			
 
@@ -312,17 +312,19 @@ def word_correct(word):
 def text_correct(input):
 	text = open(input, 'r')
 	wordre = re.compile('[a-z][\w\-\']*')
-	wordsplit = re.compile('[^a-zA-Z0-9-\'#]+')
+	wordsplit = re.compile(r'([^a-zA-Z0-9-\'#\[\]]+)')
 	
 	for line in text:
 		print line
+		text_candidates = []
 		line = cleanse(line).lower()
-		for word in wordsplit.split(line):
-			print word
+		for word in (wordsplit).split(line):
 			if (wordre.match(word)):
-				print word_correct(word)[:10]
+				text_candidates.append(word_correct(word)[:5])
 			else:
-				print [(word,0)]
+				text_candidates.append([(word,0)])
+		print text_candidates
+
 
 
 

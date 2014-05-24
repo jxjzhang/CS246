@@ -20,3 +20,4 @@ gfs	girlfriends
 gr8	great
 bc	because
 mfs	motherfuckers
+rt	retweet
