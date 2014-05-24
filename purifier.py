@@ -307,14 +307,16 @@ def word_correct(word):
 		words = []
 		for w in a:
 			words += squeeze(w)
+		
+		c = []
 		for w in words:
 			candidates += edit_candidates(w, 1)
 			candidates += phonetic_candidates_soundex(w, 1)
 			candidates += phonetic_candidates_metaphone(w, 1)
-			candidates = viterbi_trim(candidates, w)
+			c += viterbi_trim(candidates, w)
 			
 
-		candidates = compress(candidates)
+		candidates = compress(c)
 		c = []
 		for t in candidates:
 			if (t[1] * word_freq(t[0])) > 0:
