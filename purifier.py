@@ -148,19 +148,19 @@ def phonetic_candidates_soundex(word, d):
 	soundex_candidates=[]
 	if phonetic_representation in dict_inverted_soundex:
 		word_list = dict_inverted_soundex[phonetic_representation]
-			for w in word_list:
-				soundex_candidates.append((w, 0.5*d))
+		for w in word_list:
+			soundex_candidates.append((w, 0.5*d))
 		
 	return soundex_candidates
 
 def phonetic_candidates_metaphone(word, d):
 	word=word.lower()
 	metaphone_representation=doublemetaphone(word)
-	metaphone_cadidates=[]
+	metaphone_candidates=[]
 	for element in metaphone_representation: 
 		if element in dict_inverted_metaphone:
 			word_list=dict_inverted_metaphone[element]
-			for word in word_list
+			for w in word_list:
 				metaphone_candidates.append((w, 0.5*d))
 	
 	return metaphone_candidates
