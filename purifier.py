@@ -8,7 +8,7 @@
 # -> list of tuples (candidate, p) where p is relative probability
 
 
-import re, json, collections, numpy, math, nltk
+import re, json, collections, numpy, math, string
 from operator import itemgetter
 import unicodedata
 
@@ -66,7 +66,7 @@ def cleanse(line):
 	metadata = re.compile('^@\w+ \[\d+\]$')
 	rtprefix = re.compile('^RT @\w+: ')
 	user = re.compile('@\w+')
-	url = re.compile('http(s)?://.+')
+	url = re.compile('http(s)?://[^\s]+')
 
 	if not metadata.match(line):
 		m = rtprefix.search(line)
@@ -291,17 +291,22 @@ def word_correct(word):
 	return candidates
 
 def text_correct(input):
+	import nltk
 	text = open(input, 'r')
 	wordre = re.compile('[a-z][\w\-\']*')
+	wordsplit = re.compile('[^a-zA-Z0-9-\'#]+')
+	
 	for line in text:
 		print line
 		line = cleanse(line).lower()
-		print line
-		for word in nltk.word_tokenize(line):
+		for word in wordsplit.split(line):
+		#for word in nltk.word_tokenize(line):
+			print word
 			if (wordre.match(word)):
 				print word_correct(word)
 			else:
-				print word
+				print [(word,0)]
+
 
 
 
