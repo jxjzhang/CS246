@@ -285,6 +285,8 @@ def viterbi_trim(candidates, word):
 	for tuple in candidates:
 		sim = (letter_sim(word, tuple[0]) - phonetic_threshold)*(1/phonetic_threshold)
 		if (sim >= 0):
+			if (tuple[0] in NWORDS):
+				sim *= 1.2 # TODO: arbitrary weight towards stuff in dict?
 			c.append((tuple[0], tuple[1]*sim))
 	return c
 
