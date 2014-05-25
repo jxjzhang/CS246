@@ -322,14 +322,15 @@ def word_correct(word):
 			if (t[1] * word_freq(t[0])) > 0:
 				c.append((t[0], t[1] * math.log(word_freq(t[0]) + 1)))
 		candidates = sorted(c, key=itemgetter(1), reverse=True)
-		top = candidates[0][1]
-		c = []
-		for t in candidates:
-			if (t[1]/top >= word_threshold):
-				c.append(t)
-		candidates = c
 		if not candidates:
 			candidates = [(word, -1)]
+		else:
+			top = candidates[0][1]
+			c = []
+			for t in candidates:
+				if (t[1]/top >= word_threshold):
+					c.append(t)
+			candidates = c
 	else:
 		candidates = [(word, 0)]
 	return candidates
@@ -354,6 +355,24 @@ def text_correct(input, output):
 			output.write(abbrev_phrase(sem(c[0][0]))) # Replace with semantic equiv, if applicable
 
 
+def test_word():
+	total = 0
+	errors = 0
+	for key in dict_correct:
+		total += 1
+		output = key + '\t'
+		output += ','.join(dict_correct[key])
+
+		c = []
+		for t in word_correct(key):
+			c.append(t[0])
+		output += '\n\t' + ','.join(c)
+		
+		if not set(dict_correct[key]).intersection(set(c)):
+			print output
+			errors += 1
+	print str(errors) + '/' + str(total) + ' errors'
+
 # temporary globals: loading dictionaries
 alphabet = 'abcdefghijklmnopqrstuvwxyz'
 vowels = 'aeiou'
@@ -373,6 +392,8 @@ dict_inverted_soundex=json.load(dict_inverted_soundex)
 dict_inverted_metaphone=open("inverted_metaphoneDict.json")
 dict_inverted_metaphone=json.load(dict_inverted_metaphone)
 dict_letters = read_scoring("letter_scoring.txt")
+dict_correct = open("correct.json")
+dict_correct = json.load(dict_correct)
 phonetic_threshold = 0.4 # used to trim the phonetic candidates
 word_threshold = 0.8 # used to trim the word candidates
 

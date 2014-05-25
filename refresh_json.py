@@ -30,4 +30,5 @@ def make_json(f, output):
 make_dict('abbrev_word.txt','abbrev_word.json')
 make_dict('abbrev_phrase.txt','abbrev_phrase.json')
 make_dict('abbrev_sem.txt','abbrev_sem.json')
+make_dict('correct.txt','correct.json')
 make_json('ispell_dict.txt', 'dict.json')
