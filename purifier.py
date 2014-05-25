@@ -302,37 +302,40 @@ def viterbi_trim(candidates, word):
 # Returns a list of candidate word tuples in descending probability order
 def word_correct(word):
 	candidates = []
-	if (word not in NWORDS): # only correct if not in dictionary
-		a = abbrev_word(word)
-		words = []
-		for w in a:
-			words += squeeze(w)
+	
+	a = abbrev_word(word)
+	words = []
+	for w in a:
+		words += squeeze(w)
+	
+	c = []
+	for w in words:
+		candidates += edit_candidates(w, 1)
+		candidates += phonetic_candidates_soundex(w, 1)
+		candidates += phonetic_candidates_metaphone(w, 1)
+		c += viterbi_trim(candidates, w)
 		
-		c = []
-		for w in words:
-			candidates += edit_candidates(w, 1)
-			candidates += phonetic_candidates_soundex(w, 1)
-			candidates += phonetic_candidates_metaphone(w, 1)
-			c += viterbi_trim(candidates, w)
-			
 
-		candidates = compress(c)
-		c = []
-		for t in candidates:
-			if (t[1] * word_freq(t[0])) > 0:
-				c.append((t[0], t[1] * math.log(word_freq(t[0]) + 1)))
-		candidates = sorted(c, key=itemgetter(1), reverse=True)
-		if not candidates:
-			candidates = [(word, 1)]
-		else:
-			top = candidates[0][1]
-			c = []
-			for t in candidates:
-				if (t[1]/top >= word_threshold):
-					c.append(t)
-			candidates = c
-	else:
+	candidates = compress(c)
+	c = []
+	for t in candidates:
+		if (t[1] * word_freq(t[0])) > 0:
+			c.append((t[0], t[1] * math.log(word_freq(t[0]) + 1)))
+	candidates = sorted(c, key=itemgetter(1), reverse=True)
+
+	if not candidates:
 		candidates = [(word, 1)]
+	else:
+		top = candidates[0][1]
+		c = []
+		# print candidates
+		for t in candidates:
+			if (t[1]/top >= word_threshold):
+				c.append(t)
+		if (word in NWORDS): # Add word back into candidates with highest score if in dict
+			c.append((word,top))
+		candidates = compress(c)
+
 	return candidates
 
 def text_correct(input, output):
@@ -399,5 +402,5 @@ dict_letters = read_scoring("letter_scoring.txt")
 dict_correct = open("correct.json")
 dict_correct = json.load(dict_correct)
 phonetic_threshold = 0.4 # used to trim the phonetic candidates
-word_threshold = 0.8 # used to trim the word candidates
+word_threshold = 0.7 # used to trim the word candidates
 

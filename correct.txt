@@ -58,10 +58,11 @@ hahaha	haha
 lmfao	lmao
 tweets	tweets
 bro	brother
-ima	I'm gonna 
+ima	i'm gonna 
 aint	ain't
 giggs	giggs
 kinda	kind of
+kinda	kinda
 w	with
 cuz	because
 tryna	trying to
@@ -88,6 +89,7 @@ unfollowed	unfollowed
 1st	1st
 tf	the fuck
 app	application
+app	app
 --	--
 11	11
 pics	pictures
@@ -100,7 +102,7 @@ dat	that
 blog	blog
 t	to
 t	t
-imma	I'm a
+imma	i'm a
 50	50
 ariana	ariana
 d	the
@@ -194,6 +196,7 @@ mi	miles
 22	22
 rihanna	rihanna
 everytime	every time
+everytime	everytime
 ap	AP
 thot	thot
 kd	Kevin Durant
@@ -235,7 +238,7 @@ dms	direct messages
 ||	||
 lol'n	lol
 mf	motherfucker
-jk	just kidding
+jk	jk
 dnt	don't
 vidic	vidic
 4th	4th
@@ -274,6 +277,7 @@ chillin	chilling
 should've	should've
 okc	oklahoma city
 okc	okcupid
+okc	okc
 boko	boko
 bf	boyfriend
 lmaooo	lmao
@@ -343,6 +347,7 @@ bjp	bjp
 thots	thots
 que	que
 apps	applications
+app	apps
 fellaini	fellaini
 wasnt	wasn't
 utd	utd
@@ -385,6 +390,7 @@ hw	homework
 hw	how
 28	28
 hahahah	haha
+hahahah	hahahah
 theyre	they're
 le	le
 suho	suho
@@ -395,4 +401,4 @@ ohh	ohh
 amo	amo
 nemanja	nemanja
 ahhh	ahh
-'i	I
+'i	i
