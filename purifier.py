@@ -323,7 +323,7 @@ def word_correct(word):
 				c.append((t[0], t[1] * math.log(word_freq(t[0]) + 1)))
 		candidates = sorted(c, key=itemgetter(1), reverse=True)
 		if not candidates:
-			candidates = [(word, -1)]
+			candidates = [(word, 1)]
 		else:
 			top = candidates[0][1]
 			c = []
@@ -332,13 +332,14 @@ def word_correct(word):
 					c.append(t)
 			candidates = c
 	else:
-		candidates = [(word, 0)]
+		candidates = [(word, 1)]
 	return candidates
 
 def text_correct(input, output):
 	text = open(input, 'r')
 	output = open(output, 'w')
 	wordre = re.compile('[a-z][\w\-\']*')
+	whitespace = re.compile('\s+')
 	wordsplit = re.compile(r'([^a-zA-Z0-9-\'#\[\]]+)')
 	
 	for line in text:
@@ -348,8 +349,10 @@ def text_correct(input, output):
 		for word in (wordsplit).split(clean_line):
 			if (wordre.match(word)):
 				text_candidates.append(word_correct(word))
-			else:
+			elif (whitespace.match(word)):
 				text_candidates.append([(word,0)])
+			else:
+				text_candidates.append([(word,-1)])
 
 		for c in text_candidates:
 			output.write(abbrev_phrase(sem(c[0][0]))) # Replace with semantic equiv, if applicable
@@ -372,6 +375,7 @@ def test_word():
 			print output
 			errors += 1
 	print str(errors) + '/' + str(total) + ' errors'
+
 
 # temporary globals: loading dictionaries
 alphabet = 'abcdefghijklmnopqrstuvwxyz'
