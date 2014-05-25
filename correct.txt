@@ -1,4 +1,3 @@
-i	I
 -	-
 u	you
 rt	retweet
@@ -15,6 +14,8 @@ lmao	lmao
 4	four
 4	4
 ur	you are
+ur	your
+ur	you're
 1	1
 haha	haha
 ya	you
@@ -22,6 +23,7 @@ retweet	retweet
 5	5
 omg	omg
 y'all	you all
+y'all	y'all
 |	|
 unfollowers	unfollowers
 niggas	niggas	
@@ -46,9 +48,9 @@ dm	dame
 idk	idk
 unfollower	unfollower
 r	are
-smh	shaking my head
+smh	smh
 da	the	
-wtf	what the fuck
+wtf	wtf
 b	be
 ppl	people
 8	8
@@ -56,7 +58,7 @@ hahaha	haha
 lmfao	lmao
 tweets	tweets
 bro	brother
-ima	i am going to
+ima	I'm gonna 
 aint	ain't
 giggs	giggs
 kinda	kind of
@@ -68,6 +70,7 @@ af	as fuck
 12	12
 bruh	bro
 yall	you all
+yall	y'all
 fav	favorite
 nah	no
 15	15
@@ -76,8 +79,8 @@ rn	right now
 instagram	instagram
 selfie	selfie
 fuckin	fucking
-tbh	to be honest
-ily	I love you
+tbh	tbh
+ily	ily
 9	9
 ilysm	ilysm
 e	e
@@ -133,7 +136,7 @@ hahahaha	haha
 16	16
 texting	texting
 goin	going
-nba	NBA
+nba	nba
 g	gangster
 g	g
 g	good
@@ -197,6 +200,7 @@ kd	Kevin Durant
 40	40
 yu	you
 's	's
+'s	is
 gettin	getting
 starbucks	starbucks
 yay	yay
@@ -354,7 +358,7 @@ facetime	facetime
 wassup	what's up
 insta	instagram
 48	48
-hmu	hit me up
+hmu	hmu
 katy	katy
 lls	lls
 shits	shits
