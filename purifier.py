@@ -299,6 +299,41 @@ def viterbi_trim(candidates, word):
 
 # TODO(?): Generate bigram frequency dictionary
 
+def bigram_correction(first, second, third):
+	ret = dict();
+	flag = 0
+	for i in range(len(second)):
+		ret[second[i][0]] = 0
+	if len(first) !=0:
+		flag = 1
+		for i in range(len(first)):
+			for j in range(len(second)):
+				if (first[i][0],second[j][0]) in dict_bigram:
+					ret[second[j][0]] += dict_bigram[(first[i][0],second[j][0])]*first[i][1]*second[j][1]
+				else:
+					ret[second[j][0]] = 1*first[i][1]*second[j][1]
+	if len(third) != 0:
+		flag =1
+		for i in range(len(third)):
+			for j in range(len(second)):
+				if (second[j][0],third[i][0]) in dict_bigram:
+					ret[second[j][0]] += dict_bigram[(second[j][0],third[i][0])]*second[j][1]*third[i][1]
+				else:
+					ret[second[j][0]] += 1*second[j][1]*third[i][1]
+#	for i in range(len(second)):
+#		ret[second[i][0]] *= second[i][1]+second[i][1]*0.001
+	
+	if not flag:
+		for i in range(len(second)):
+			ret[second[i][0]] = second[i][1]
+	value = 0
+	key = 0
+	for i in range(len(second)):
+		if ret[second[i][0]] > value:
+			value = ret[second[i][0]]
+			key = second[i][0]
+	return (key,value)
+
 # Returns a list of candidate word tuples in descending probability order
 def word_correct(word):
 	wordre = re.compile('[a-z][\w\-\']*')
@@ -360,6 +395,33 @@ def text_correct(input, output):
 			else:
 				text_candidates.append([(word,-1)])
 
+		print text_candidates
+		for i in range(len(text_candidates)):
+			j = i-1;
+			while j>=0 and text_candidates[j][0][1]==0:
+				j -=1
+		#	print j
+			if j>=0 and text_candidates[j][0][1]>0:
+				first = text_candidates[j]
+			else:
+				first = []
+			if text_candidates[i][0][1] > 0:
+				second = text_candidates[i]
+			else:
+				continue
+			j = i+1
+			while j<len(text_candidates) and text_candidates[j][0][1]==0:
+				j+=1
+		#	print j
+			if j<len(text_candidates) and text_candidates[j][0][1] > 0:
+				third = text_candidates[j]
+			else:
+				third = []
+			print first, second, third
+		#	print second
+			text_candidates[i] = [bigram_correction(first,second,third)]
+		print text_candidates
+	
 		for c in text_candidates:
 			output.write(abbrev_phrase(sem(c[0][0]))) # Replace with semantic equiv, if applicable
 
@@ -402,6 +464,16 @@ dict_inverted_soundex=json.load(dict_inverted_soundex)
 dict_inverted_metaphone=open("inverted_metaphoneDict.json")
 dict_inverted_metaphone=json.load(dict_inverted_metaphone)
 dict_letters = read_scoring("letter_scoring.txt")
+dict_bigram_fd = open("bigramDict.json")
+dict_bigram_tmp = json.load(dict_bigram_fd)
+dict_bigram = dict()
+for i in dict_bigram_tmp.keys():
+	(word1,word2) = i.split("#")
+	tmp = (word1,word2)
+	dict_bigram[tmp] = dict_bigram_tmp[i]
+del dict_bigram_tmp
+	
+
 dict_correct = open("correct.json")
 dict_correct = json.load(dict_correct)
 phonetic_threshold = 0.4 # used to trim the phonetic candidates
