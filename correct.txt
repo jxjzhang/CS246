@@ -114,7 +114,8 @@ y	why
 2nd	2nd
 zayn	zayn
 gon	gonna
-xd	XD
+gon	gone
+xd	xd
 oomf	oomf
 sooo	so
 dj	dj
@@ -129,12 +130,13 @@ youtube	youtube
 s	is
 s	s
 finna	find a
-ive	I've
+ive	i’ve
 v	very
 0	0
 stats	stats
 durant	durant
 hahahaha	haha
+hahahaha	hahahaha
 16	16
 texting	texting
 goin	going
@@ -197,7 +199,7 @@ mi	miles
 rihanna	rihanna
 everytime	every time
 everytime	everytime
-ap	AP
+ap	ap
 thot	thot
 kd	Kevin Durant
 40	40
@@ -352,6 +354,7 @@ fellaini	fellaini
 wasnt	wasn't
 utd	utd
 c'mon	come on
+c'mon	c'mon
 hd	hd
 texted	texted
 followww	follow
@@ -379,7 +382,8 @@ emojis	emojis
 dawg	dog
 yrs	years
 sa	sa
-ik	I know
+ik	i know
+ik	ik
 'cause	because
 21st	21st
 spongebob	spongebob

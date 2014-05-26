@@ -301,6 +301,7 @@ def viterbi_trim(candidates, word):
 
 # Returns a list of candidate word tuples in descending probability order
 def word_correct(word):
+	wordre = re.compile('[a-z][\w\-\']*')
 	candidates = []
 	
 	a = abbrev_word(word)
@@ -332,10 +333,11 @@ def word_correct(word):
 		for t in candidates:
 			if (t[1]/top >= word_threshold):
 				c.append(t)
-		if (word in NWORDS): # Add word back into candidates with highest score if in dict
-			c.append((word,top))
+		if (word in NWORDS or not wordre.match(word)): # Add word back into candidates with highest score if in dict
+			c.insert(0, (word,top))
 		candidates = compress(c)
-
+			
+	candidates = sorted(candidates, key=itemgetter(1), reverse=True)
 	return candidates
 
 def text_correct(input, output):
@@ -346,11 +348,12 @@ def text_correct(input, output):
 	wordsplit = re.compile(r'([^a-zA-Z0-9-\'#\[\]]+)')
 	
 	for line in text:
+		output.write(line)
 		print line
 		text_candidates = []
 		clean_line = cleanse(line).lower()
 		for word in (wordsplit).split(clean_line):
-			if (wordre.match(word)):
+			if (wordre.match(word) and word != "2"):
 				text_candidates.append(word_correct(word))
 			elif (whitespace.match(word)):
 				text_candidates.append([(word,0)])
