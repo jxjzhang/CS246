@@ -13,7 +13,7 @@ from operator import itemgetter
 import unicodedata
 from soundex import *
 from metaphone import *
-
+import subprocess
 class Mysqueezer:
     '''
     classdocs
@@ -429,6 +429,7 @@ def text_correct(input, output):
 def test_word():
 	total = 0
 	errors = 0
+	output_file=open("evaluation.txt","w")
 	for key in dict_correct:
 		total += 1
 		output = key + '\t'
@@ -441,8 +442,42 @@ def test_word():
 		
 		if not set(dict_correct[key]).intersection(set(c)):
 			print output
+			output_file.write(output.encode("utf-8"))
+			output_file.write("\n")
 			errors += 1
 	print str(errors) + '/' + str(total) + ' errors'
+	output_file.write(str(errors) + '/' + str(total) + ' errors' )
+
+def test_word_aspell():
+	output_file=open("evaluation_aspell.txt", "w")
+	total = 0
+	errors = 0
+	for key in dict_correct.keys():
+		total += 1
+		output = key + '\t'
+		output += ','.join(dict_correct[key])
+
+		c = []
+		result=subprocess.check_output("echo " +'"'+ key +'"'+ " | aspell -a", shell=True)
+		#print result
+		if '*' in result:
+			c.append(key)
+		if ":" in result:
+			index=result.index(":")
+			c=result[index+2:].split(",")
+
+			output += '\n\t' + ','.join(c)
+
+		if not set(dict_correct[key]).intersection(set(c)):
+		  
+			print output
+			# import ipdb; ipdb.set_trace()
+			output_file.write(output.encode('utf8'))
+			output_file.write('\n')
+			
+			errors += 1
+	print str(errors) + '/' + str(total) + ' errors'
+	output_file.write(str(errors)+'/'+str(total)+'errors')
 
 
 # temporary globals: loading dictionaries
