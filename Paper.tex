@@ -1,0 +1,90 @@
+\documentclass[10pt]{article}
+\usepackage{url,graphicx,tabularx,array}%,geometry} %,fullpage,amsfonts,amsmath}
+\usepackage{amsmath,amsthm,amsfonts,amssymb,amscd,mathabx,ulem}
+\usepackage{fullpage}
+\usepackage{lastpage}
+\usepackage{enumerate}
+\usepackage{fancyhdr}
+\usepackage{mathrsfs}
+\usepackage[margin=1.5cm]{geometry}
+\usepackage{listings}
+\usepackage{mathabx}
+\usepackage{tikz,pgfplots}
+\usepackage{enumitem}
+\usepackage{graphicx,wrapfig}
+\usepackage{color,hyperref,endnotes}
+
+\usetikzlibrary{arrows,shapes}
+\usepackage{tikz-qtree}
+
+%\setlength{\parskip}{1ex} %--skip lines between paragraphs
+\setlength{\parindent}{0pt} %--don't indent paragraphs
+\setlist{nolistsep}
+%-- Commands for header
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+
+% \renewcommand{\title}[1]{\textbf{#1}\\}
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+\newcommand{\gray}[1]{\textcolor{gray}{#1}}
+
+\lstset{basicstyle=\footnotesize\ttfamily, 
+	tabsize=2,
+	language=Python,
+	backgroundcolor=\color{lightgray},
+	commentstyle=\color{mygreen},
+	keywordstyle=\color{blue},
+	stringstyle=\color{red}\ttfamily,
+	showstringspaces=false,
+	breaklines=true
+}
+
+\title{CS246: Twitter Purification}
+\author{Wen Shi, Zijun Xue, Jennifer Zhang}
+\date{June 2014}
+\begin{document}
+\maketitle
+
+\section*{Abstract}
+\section*{Introduction}
+\subsection*{Motivation}
+\subsection*{Overview}
+\section*{Implementation}
+\subsection*{Dictionary}
+TODO: Jennifer
+\subsection*{Single word correction}
+\subsubsection*{Abbreviations: single word}
+TODO: Jennifer
+\subsubsection*{Squeeze}
+TODO: Zijun
+\subsubsection*{Edit distance}
+TODO: Zijun
+\subsubsection*{Phonetic candidates: Soundex}
+TODO: Shi Wen
+\subsubsection*{Phonetic candidates: Metaphone}
+TODO: Shi Wen
+\subsubsection*{Letter similarity: Viterbi}
+TODO: Jennifer
+\subsubsection*{Word frequency scaling}
+TODO: Jennifer
+\subsubsection*{Abbreviations: phrase}
+TODO: Jennifer
+\subsection*{Bigram correction}
+TODO: add some subsections here?
+\section*{Discussion and Evaluation}
+\subsection*{Single word results}
+\subsection*{Bigram results}
+\section*{Future work}
+TODO: listing any more aspects where it didn't work well
+\subsubsection*{Unconventional word tokenization}
+\subsubsection*{Obscure vocabulary or slang}
+\subsubsection*{Proper nouns and acronyms}
+\subsubsection*{Abbreviations}
+\subsubsection*{Dictionary}
+
+\end{document}

@@ -148,7 +148,7 @@ def phonetic_candidates_soundex(word, d):
 	if phonetic_representation in dict_inverted_soundex:
 		word_list = dict_inverted_soundex[phonetic_representation]
 		for w in word_list:
-			soundex_candidates.append((w, 0.5*d))
+			soundex_candidates.append((w, word_threshold*d))
 		
 	return soundex_candidates
 
@@ -160,7 +160,7 @@ def phonetic_candidates_metaphone(word, d):
 		if element in dict_inverted_metaphone:
 			word_list=dict_inverted_metaphone[element]
 			for w in word_list:
-				metaphone_candidates.append((w, 0.5*d))
+				metaphone_candidates.append((w, word_threshold*d))
 	
 	return metaphone_candidates
 	
@@ -282,14 +282,14 @@ def tokenize(word):
 	return list(word)
 
 def letter_sim(word, candidate):
-	score = align(word, word, dict_letters)
 	sim = align(word, candidate, dict_letters)
-	return sim/score
+	return sim
 
 def viterbi_trim(candidates, word):
 	c = []
 	for tuple in candidates:
-		sim = (letter_sim(word, tuple[0]) - phonetic_threshold)*(1/phonetic_threshold)
+		score = align(word, word, dict_letters)
+		sim = (letter_sim(word, tuple[0])/score - phonetic_threshold)*(1/phonetic_threshold)
 		if (sim >= 0):
 			if (tuple[0] in NWORDS or tuple[0] in dict_sem or tuple[0] in dict_abbrphrase):
 				sim *= 1.2 # TODO: arbitrary weight towards stuff in dict?
@@ -351,8 +351,8 @@ def word_correct(word):
 		candidates += phonetic_candidates_metaphone(w, 1)
 		c += viterbi_trim(candidates, w)
 		
-
 	candidates = compress(c)
+
 	c = []
 	for t in candidates:
 		if (t[1] * word_freq(t[0])) > 0:

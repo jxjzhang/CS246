@@ -56,13 +56,17 @@ def main():
 	   else:
 		   tweet_iter = stream.statuses.sample()
 
+	i = 0
 	# Iterate over the sample stream.
 	for tweet in tweet_iter:
-	   # You must test that your tweet has text. It might be a delete
-	   # or data message.
-	   if tweet.get('text') and tweet.get('lang') == 'en':
-		   #printNicely("@" + tweet['user']['screen_name'] + ' [' + str(tweet['retweet_count']) + ']')
-		   printNicely(tweet['text'])
+		# You must test that your tweet has text. It might be a delete
+		# or data message.
+		if i > 10:
+			exit(0)
+		if tweet.get('text') and tweet.get('lang') == 'en':
+			#printNicely("@" + tweet['user']['screen_name'] + ' [' + str(tweet['retweet_count']) + ']')
+			printNicely(tweet['text'])
+			i += 1
 #else:
 		   #printNicely("-- Some data: " + str(tweet))
 
