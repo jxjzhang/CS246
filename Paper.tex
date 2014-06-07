@@ -1,4 +1,4 @@
-\documentclass[10pt]{article}
+\documentclass[twocolumn,10pt]{article}
 \usepackage{url,graphicx,tabularx,array}%,geometry} %,fullpage,amsfonts,amsmath}
 \usepackage{amsmath,amsthm,amsfonts,amssymb,amscd,mathabx,ulem}
 \usepackage{fullpage}
@@ -56,7 +56,10 @@
 \subsection*{Overview}
 \section*{Implementation}
 \subsection*{Dictionary}
-TODO: Jennifer
+\paragraph{} In a standard spellchecker, a word would be searched against an existing dictionary, and skipped over if it exists and corrected if it doesn't. This is, unfortunately, not an acceptable method of attack for correcting tweets. The major issue with this approach is that it assumes a perfect dictionary; given the amount of slang, proper nouns, etc. in tweets, this is not only exceptionally difficult, but constitutes a moving target as new slang and names are propagated daily.
+\paragraph{} In the case where a given word already exists in the dictionary, it could easily be a word misuse; aside from common grammatical mistakes such as confounding \textit{your} or \textit{you're}, it is common to intentionally misspell \textit{then} as \textit{den}. Since \textit{den} is a legitimate word in the English language, a normal spellchecker would fail to attempt to correct it. 
+\paragraph{} In the case where a word is encountered that does not exist in a dictionary, it is often more appropriate to not apply a correction. Slang and proper nouns abound in Twitter; while the line between a legitimate word versus a misspelling can be blurry, e.g. \textit{want to} vs \textit{wanna}, but a great deal of slang have no `correct' equivalent in a dictionary, e.g. Twitter specific words such as \textit{retweet} as well as many more vulgar examples.
+\paragraph{}Nonetheless, a high quality dictionary was necessary for this project. Word candidates that exist in the dictionary can therefore be weighted more heavily, and correctly spelled obscure words can avoid being overwhelmed by exceptionally common words that are closely phonetically related or via edit distance. Initially, a union of UNIX's dictionary, Google Translate's list of most frequently used words\footnote{\href{https://github.com/first20hours/google-10000-english}{google-10000-english}}, and the most common words from TV and movie scripts\footnote{\href{http://en.wiktionary.org/wiki/Wiktionary:Frequency_lists\#TV_and_movie_scripts}{Wiktionary Frequency Lists}} was used. However, this failed to produce the an acceptable list, partially due to the overinclusion of slang and underinclusion of conjugated verbs. 
 \subsection*{Single word correction}
 \subsubsection*{Abbreviations: single word}
 TODO: Jennifer
@@ -69,7 +72,15 @@ TODO: Shi Wen
 \subsubsection*{Phonetic candidates: Metaphone}
 TODO: Shi Wen
 \subsubsection*{Letter similarity: Viterbi}
-TODO: Jennifer
+\paragraph{} Several hundred correction candidates may be found for a word, based on searching within a particular edit distance or the same Soundex/Metaphone class. To trim this list, we first make some intuitive assumptions about the manner in which Twitter users typically misspell their words.
+\begin{itemize}
+\item Abbreviation: Twitter words are usually shorter than their correct counterparts
+\item Letter similarity: the same important letters are usually present in the Twitter word as the correct counterpart. There are a few phonetic exceptions to this, e.g. substituting \textit{d} for \textit{th} as in \textit{dere} vs \textit{there}.
+\item Transposition of remaining significant letters is rare, which makes sense if other letters have already been omitted for brevity.
+\end{itemize}
+With these observations in mind, we set out to find a reasonable scoring algorithm to measure the similarity between a Twitter word versus its correction candidate.
+
+\paragraph{} The Viterbi algorithm is a dynamic programming algorithm typically used in hidden Markov models, such that it finds the optimal path of hidden states given a set of observations.
 \subsubsection*{Word frequency scaling}
 TODO: Jennifer
 \subsubsection*{Abbreviations: phrase}
