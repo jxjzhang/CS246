@@ -17,6 +17,5 @@ Single word result:
 We also apply traditional aspell's algorithm, which also returns a candidate list for each single misspelled word as a comparison. The result shows that aspell algorithm produced 303/368 errors, which is much higher than our Twitter purification algorithm. For main reason for the poor performance of aspell algorithm might due to the speciality of noisy text present in tweets and social media.
 
 Related work:
-
-
+Subhabrata Mukherjee, etc published a paper that dealing with the sentiment analysis of tweets and in the pre-processing work, they used a tweets specific spell checking algorithm. This algorithm only use vowel exchange, dropping of vowels, text compression, squeeze and edit distance methods for the spell checking in their final algorithm although they intended to also dealing with phonetic transformation, segmentation with punctuation, segmentation with compound words,etc.
  
