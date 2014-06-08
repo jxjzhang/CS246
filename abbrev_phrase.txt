@@ -3,7 +3,6 @@ idk	I don't know
 idek	I don't even know
 omfg	oh my fucking god
 wtf	what the fuck
-5sos	5 seconds of summer
 smh	shaking my head
 ily	I love you
 ilysm	I love you so much
@@ -15,7 +14,7 @@ ik	I know
 idgaf	I don't give a fuck
 jk	just kidding
 hmu	hit me up
-bff	best friends forever
+bff	best friend
 nvm	never mind
 ffs	for fucks sake
 oomf	one of my friends
