@@ -33,16 +33,7 @@
 \newcommand{\red}[1]{\textcolor{red}{#1}}
 \newcommand{\gray}[1]{\textcolor{gray}{#1}}
 
-\lstset{basicstyle=\footnotesize\ttfamily, 
-	tabsize=2,
-	language=Python,
-	backgroundcolor=\color{lightgray},
-	commentstyle=\color{mygreen},
-	keywordstyle=\color{blue},
-	stringstyle=\color{red}\ttfamily,
-	showstringspaces=false,
-	breaklines=true
-}
+
 
 \title{CS246: Twitter Purification}
 \author{Wen Shi, Zijun Xue, Jennifer Zhang}
@@ -50,13 +41,13 @@
 \begin{document}
 \maketitle
 
+
 \section*{Abstract}
-\section*{Introduction}
-\subsection*{Motivation}
-\subsection*{Overview}
+\paragraph{} Twitter is one of the most prolific and widely available sources of social media data; 1 billion tweets are produced every 5 days.\footnote{\href{http://http://www.statisticbrain.com/twitter-statistics/}{Twitter Statistics}} However, it often behaves badly as a dataset due to the high levels of noise, and nearly any project that utilizes tweets as a dataset must prepend their analysis with some data normalization. The goal of this project is to purify tweets of misspellings, abbreviations, etc. to potentially convert it into a more convenient source of data for other research purposes. The problem of common unintentional misspellings is relatively well-solved, but tweets are particularly malformed for a host of other reasons.
+\paragraph{} Two analysis passes of a potentially malformed tweets are used: once for single word correction, and the second for contextual analysis. For single word correction, we use a combination of common abbreviations, word frequency, dictionary presence, and distance between a potential correction candidate and the original word. Distance is defined in terms of edit distance, phonetic class, and overall letter similarity. Contextual analysis uses bigram frequency to find the best candidate in cases where single word correction still left ambiguity.
 \section*{Implementation}
 \subsection*{Dataset}
-\paragraph{} Approximately 800,000 tweets consisting of about 120,000 distinct words were harvested Twitter's sample API\footnote{\href{https://dev.twitter.com/docs/api/1.1/get/statuses/sample}{GET statuses/sample}}. Word tokens were defined as any whitespace delimited string that begins with an alphabet letter and otherwise may include alphanumeric characters, apostrophes, or hyphens. We excluded some Twitter specific tokens, including usernames (strings that begin with @), hashtags (strings that begin with \#), emoticons, and internet urls (\textit{http(s)://...}). All strings were converted to lowercase for analysis. Final corrected output replaced any usernames with \textit{[username]}, and a hardcoded list of laughter tokens were converted to \textit{[laughter]}.\footnote{lmao, lmfao, lolz, lol, rofl, lls, haha}
+\paragraph{} Approximately 800,000 tweets consisting of about 120,000 distinct words were harvested Twitter's sample API\footnote{\href{https://dev.twitter.com/docs/api/1.1/get/statuses/sample}{GET statuses/sample}}. Word tokens were defined as any whitespace delimited string that begins with an alphabet letter and otherwise may include alphanumeric characters, apostrophes, or hyphens. We excluded some Twitter specific tokens, including usernames (strings that begin with @), hashtags (strings that begin with \#), emoticons, and internet urls (\textit{http(s)://...}). All strings were converted to lowercase for analysis. Final corrected output replaced any usernames with ]\textit{username}], and a hardcoded list of laughter tokens were converted to [\textit{laughter}].\footnote{lmao, lmfao, lolz, lol, rofl, lls, haha}
 \subsection*{Dictionary}
 \paragraph{} In a standard spellchecker, a word would be searched against an existing dictionary, and skipped over if it exists and corrected if it doesn't. This is, unfortunately, not an acceptable method of attack for correcting tweets. The major issue with this approach is that it assumes a perfect dictionary; given the amount of slang, proper nouns, etc. in tweets, this is not only exceptionally difficult, but constitutes a moving target as new slang and names are propagated daily.
 \paragraph{} In the case where a given word already exists in the dictionary, it could easily be a word misuse; aside from common grammatical mistakes such as confounding \textit{your} or \textit{you're}, it is common to intentionally misspell \textit{then} as \textit{den}. Since \textit{den} is a legitimate word in the English language, a normal spellchecker would fail to attempt to correct it. 
@@ -65,7 +56,7 @@
 \paragraph{} In the context of Twitter purification, if the given word exists in the dictionary, it is guaranteed a position in the final list of correction candidates, with the same weight as that of the frontrunner candidate (if different). Furthermore, any candidates that exist in the dictionary are weighted more heavily by $+20\%$.
 \subsection*{Single word correction}
 \subsubsection*{Abbreviations: single word}
-\paragraph{} The most common occurrences in the Twitter dataset were crosschecked against the dictionary, and mismatches were examined. Words that are abbreviations for single words\footnote{Common abbreviations for phrases were stored separately for substitution later} such that their distance was judged to be too far for an automated system to determine were listed into a separate reference file\footnote{see Appendix A-1}. This included instances where an abbreviation potentially had multiple interpretations (e.g. \textit{ur} $\rightarrow$ \textit{[your, you're]}).
+\paragraph{} The most common occurrences in the Twitter dataset were crosschecked against the dictionary, and mismatches were examined. Words that are abbreviations for single words\footnote{Common abbreviations for phrases were stored separately for substitution later} such that their distance was judged to be too far for an automated system to determine were listed into a separate reference file\footnote{see Appendix A-1}. This included instances where an abbreviation potentially had multiple interpretations (e.g. \textit{ur} $\rightarrow$ [\textit{your, you're}]).
 \paragraph{} When the purifier begins analysis of a word, it is crosschecked against this manually maintained list and makes replacements in the correction candidate list as indicated.
 \subsubsection*{Squeeze}
 TODO: Zijun
@@ -114,7 +105,7 @@ $\Pr(w|c)$ represents the weights associated with candidates thus far -- it incl
 \subsection*{Bigram correction}
 TODO: add some subsections here?
 \subsubsection*{Substitutions}
-\paragraph{} During the analysis for common abbreviations described above, any common abbreviations that map to phrases were stored in a separate reference file. Note that unlike single word abbreviations, these are unambiguous and only map to a single possibility (see Appendix A-3). After single word and bigram correction, laughter tokens and any such abbreviations are substituted with these expansions.
+\paragraph{} During the analysis for common abbreviations described above, any common abbreviations that map to phrases were stored in a separate reference file. Note that unlike single word abbreviations, this list was limited to unambiguous abbreviations, and only map to a single possibility (see Appendix A-3). After single word and bigram correction, both laughter tokens and any such abbreviations were substituted with these expansions.
 \section*{Discussion and Evaluation}
 \subsection*{Single word results}
 \paragraph{} 368 of the most frequent Twitter words that did not appear in the dictionary were manually mapped to their correct counterparts. In some cases, there were multiple possible corrections; let us refer to this set of corrections as $L_1$. The single word correction algorithm as detailed above was applied to each word in turn, and the resultant list of candidates $L_2$ was compared with $L_1$. If $L_1\cap L_2 = \emptyset$, then it is counted as an error. The Twitter purification algorithm above produced 76/368 errors.
@@ -123,10 +114,16 @@ TODO: Zijun or Shiwen to add some data about comparison with existing spell chec
 \section*{Future work}
 TODO: listing any more aspects where it didn't work well
 \subsubsection*{Unconventional word tokenization}
-\subsubsection*{Obscure vocabulary or slang}
-\subsubsection*{Proper nouns and acronyms}
+\paragraph{} The spell checking mechanism as described here works primarily for single words that are misspelled or malformed into another single word token. It does not handle cases where multiple words have been merged together in the misspelling, e.g. \textit{tryna}, \textit{whaddya}. However, we noted that the ISpell dictionary does not flag other more common instances of the same concept as a misspelling, e.g. \textit{wanna, gonna}. Thus, it could potentially be argued that since these portmanteaus have a higher tendency to cross into common vernacular, correcting them into their more formally correct versions is not high priority.
+\paragraph{} More rarely, tweets may contain multiple word tokens meant to be read as a single word, e.g. with spaces between every character, as in \textit{p r e t t y}. Correcting spacing in the most general manner might use a dynamic programming algorithm that removes all whitespace, then adds the spacing back in based on creating known words.\footnote{\href{http://www.geeksforgeeks.org/dynamic-programming-set-32-word-break-problem/}{Dynamic Programming | Set 32 (Word Break Problem)}} However, this solution is $O(n^2)$ complexity; furthermore, given the raw tweet data, there is no guarantee that there may not be entirely new words in the tweet that complicate this process. Alternatively, assuming that extra spacing always follows the same pattern where single characters are separated into individual word tokens might be used to correct this, e.g. if 3+ consecutive single letter word tokens are found, try merging them into a single word.
+\subsubsection*{Proper nouns and obscure slang}
+\paragraph{} Both proper nouns and obscure slang are often badly handled due to their rarity and lack of presence in the dictionary. For example, \textit{Cersei} is the name of a television show character which gets corrected to either \textit{course} or \textit{curse}. It might be possible to allow leniency for proper nouns and acronyms if we took capitalization into consideration. A dictionary of proper nouns could be maintained that is based on the frequency of the word occurring with or without capitalization; entirely novel words that are capitalized would be exempt from correction. The size of the Twitter dataset might need to be much larger.
+\paragraph{} However, capitalization metadata is not useful for determining the legitimacy of obscure slang. The word \textit{thot} is meant to be an acronym for `that ho over there,' although its usage has degraded to a general derogatory term for women. The Twitter purifier corrects \textit{thot} to \textit{thought} or \textit{that}; since the original word is so closely phonetically related to both of these correction candidates and occurs far less commonly, it is highly difficult to avoid a correction without adding the word to the dictionary. Tweets are a moving target in terms of an applicable dictionary; while Urban Dictionary\footnote{\href{http://www.urbandictionary.com/}{Urban Dictionary}} might provide some assistance here, it is another crowdsourced database that is difficult to navigate successfully using an automated system.
 \subsubsection*{Abbreviations}
-\subsubsection*{Dictionary}
+\paragraph{}It is particularly difficult to account for phrase abbreviations that mean differing things in different contexts. Examples of this can stretch from \textit{af} being any of [\textit{at, a fuck, as fuck}] to \textit{kd} being \textit{Kevin Durant} during a sporting event, or \textit{kill/death} in relation to a gaming event.
+
+\section*{Related work}
+\paragraph{} Aspell's algorithm uses a combination of DoubleMetaphone and weighted edit distance to find correction candidates.\footnote{\href{http://aspell.net/0.50-doc/man-html/8_How.html}{8. How Aspell Works}} Search engines such as Google use a more similar method to what was outlined here, using a combination of probabilistic data and edit distance.
 \section*{Appendix}
 \subsection*{A-1 Abbreviations: single word}
 \begin{verbatim}
@@ -185,4 +182,78 @@ nvm	never mind
 ffs	for fucks sake
 oomf	one of my friends
 \end{verbatim}
+\subsection*{A-4 Text correction example}
+\lstset{basicstyle=\footnotesize\ttfamily, 
+	tabsize=2,
+	backgroundcolor=\color{lightgray},
+	showstringspaces=false,
+	breaklines=true
+}
+\begin{lstlisting}
+Today stats: No new followers, One unfollower via http://t.co/KQMxmRhDsX
+today starts: no new followers, one unfollowers via [url]
+why doesn't accio exist in real life this is important
+why doesn't action exist in real life this is important
+I c ur picture ... but is that really you ??
+i see your picture ... but is that really you ??
+Straight a synoptic grateful dead towards strange circulating medium displacement: AuoZkEvxf
+straight a sympathetic grateful dead towards strange circulating medium displacement: akgfjkdadutdfhsdfkfajf
+Im Yeva and I eat poop
+im yea and i eat poop
+RT @Officialsimyai: If I have to beg fo yo attention den I don't want it 👋🙅💁
+if i have to beg for you attention den i don't want it 👋🙅💁
+@carinaa888 exactly!! sooo shut ur ass up lol
+[username] exactly!! so shut your ass up [laughter]
+“@YungJadeTheGawd: I wanna have a cookout tomorrow .” In dere like swimwear“
+[username]: i wanna have a cookout tomorrow .” in there like swimwear
+RT @natalieben: Greens have got far more votes per minute of TV time than any other party.  #VoteGreen2014. #EP2014
+greens have got far more votes per minute of tv time than any other party.  #votegreen2014. #ep2014
+We all could die tonight
+we all could die tonight
+Back 2 Good
+back 2 good
+one person followed me // automatically checked by http://t.co/XTToHqv7gF
+one person followed me // automatically checked by [url]
+Why people be mad when someone runs to there ex? No reason for you tryna be a rebound anyway tf lol
+why people be mad when someone runs to there ex? no reason for you tryna be a rebound anyway what the fuck [laughter]
+RT @BestVinesEver: To a piano tho?! https://t.co/ISSmUHov2Q
+to a piano tho?! [url]
+RT @TheBucktList: Need it now.🌴 http://t.co/PDXYKSKxfK
+need it now.🌴 [url]
+@MikeyPosod hell yeah👌haha
+[username] hell yeah👌[laughter]
+i get high off our memories
+i get high off our memories
+RT @CourtMitchell17: I feel like power dressing shouldnt be dressing like a man it should be owning our feminity &amp;wearing it proudly. I lov…
+i feel like power dressing shouldn't be dressing like a man it should be owning our feminist &amp;wearing it proudly. i love…
+Learn About Mountain Climbing from Novice to Experts  http://t.co/oky5Qsf1Df
+learn about mountain climbing from notice to experts  [url]
+@jdhowa2 Tuesday I typed "Waze is taking me the rapey way so if I'm not there in 10, let's hope my body shuts this whole thing down."
+[username] tuesday i typed "wake is taking me the rape way so if i'm not there in 10, let's hope my body shuts this whole thing down."
+Slim my new header 💕💕💕 she so fine man 😫😍
+slim my new header 💕💕💕 she so fine man 😫😍
+FOLLOW ME BÆ @JackDail 66
+follow me beÆ [username] 66
+@FotMound Can you give examples of a tightly focused theme? #fantasychat
+[username] can you give examples of a tightly focused theme? #fantasychat
+In love memory daddy http://t.co/OhBTgBZdP3
+in love memory daddy [url]
+My first jet lag...
+my first jet lag...
+RT @Nikaxo__: FUCK YALL THEY TRY !
+fuck y'all they try !
+RT @RomarioWay300: Who Else
+\end{lstlisting}
+
+
+\lstset{basicstyle=\footnotesize\ttfamily, 
+	tabsize=2,
+	language=Python,
+	backgroundcolor=\color{lightgray},
+	commentstyle=\color{mygreen},
+	keywordstyle=\color{blue},
+	stringstyle=\color{red}\ttfamily,
+	showstringspaces=false,
+	breaklines=true
+}
 \end{document}
